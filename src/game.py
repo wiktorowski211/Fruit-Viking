@@ -33,14 +33,14 @@ blue = (0, 0, 255)
 yellow = (255, 255, 0)
 
 # Game Fonts
-font = "..\\media\\Splatch.ttf"
+font = "../media/Splatch.ttf"
 
 # Game Framerate
 clock = pygame.time.Clock()
 FPS = 60
 
 # Fruit
-banana_img = "..\\media\\Banana.png"
+banana_img = "../media/Banana.png"
 banana = pygame.image.load(banana_img).convert_alpha()
 banana = pygame.transform.scale(banana, (256, 256))
 banana_pos = (250, 450)
