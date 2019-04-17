@@ -1,8 +1,10 @@
 import cv2
 import numpy as np
 
+
 def top_point(c):
     return tuple(c[c[:, :, 1].argmin()][0])
+
 
 lower_bound = np.array([33, 80, 40])
 upper_bound = np.array([102, 255, 255])
@@ -25,8 +27,7 @@ while True:
     maskOpen = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernelOpen)
     maskClose = cv2.morphologyEx(maskOpen, cv2.MORPH_CLOSE, kernelClose)
 
-    maskFinal = maskClose
-    conts, h = cv2.findContours(maskFinal.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    conts, h = cv2.findContours(maskClose, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
     if len(conts) > 0:
         # draw in blue the contours that were founded
@@ -39,11 +40,8 @@ while True:
         # draw the book contour (in green)
         cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-        top_point = top_point(c)
-        cv2.circle(img, top_point, 8, (0, 0, 255), -1)
+        top = top_point(c)
+        cv2.circle(img, top, 8, (0, 0, 255), -1)
 
-    cv2.imshow("maskClose", maskClose)
-    cv2.imshow("maskOpen", maskOpen)
-    cv2.imshow("mask", mask)
     cv2.imshow("cam", img)
     cv2.waitKey(10)
