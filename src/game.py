@@ -96,8 +96,7 @@ def main_menu():
                     if selected == "start":
                         print("Start")
                     if selected == "quit":
-                        pygame.quit()
-                        quit()
+                        print("Quit")
 
         # Main Menu UI
         screen.fill(gray)
