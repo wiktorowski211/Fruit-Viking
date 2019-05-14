@@ -1,32 +1,28 @@
 import cv2
 import numpy as np
 import colorsys
-
+import time
 
 def top_point(c):
     return tuple(c[c[:, :, 1].argmin()][0])
 
+def get_center_x_y(img):
+    dimensions = img.shape
+    x_center = int(dimensions[1]/2)
+    y_center = int(dimensions[0]/2)
+    return (x_center, y_center)
 
-# python
-# bgr = [59, 30, 132]
-# bgr = [195, 255, 15]
-# thresh = 60
+def get_center_point_boundries(img, center):
+    hsvRoi = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    crop_img = hsvRoi[center[1]-1:center[1]+1, center[0]-1:center[0]+1]
+    lower = np.array([crop_img[:, :, 0].min(), crop_img[:, :, 1].min(), crop_img[:, :, 2].min()])
+    lower_treshold = np.array([lower[0]-10, lower[1]-10, lower[2]-10])
+    upper = np.array([crop_img[:, :, 0].max(), crop_img[:, :, 1].max(), crop_img[:, :, 2].max()])
+    upper_treshold = np.array([upper[0]+10, upper[1]+10, upper[2]+10])
+    return (lower_treshold, upper_treshold)
 
-# convert 1D array to 3D, then convert it to HSV and take the first element
-# this will be same as shown in the above figure [65, 229, 158]
-# hsv = cv2.cvtColor(np.uint8([[bgr]]), cv2.COLOR_BGR2HSV)[0][0]
-
-# lower_bound = np.array([hsv[0] - thresh, hsv[1] - thresh, hsv[2] - thresh])
-# upper_bound = np.array([hsv[0] + thresh, hsv[1] + thresh, hsv[2] + thresh])
-
-# hsv_low = colorsys.hsv_to_rgb(33, 80, 40)
-# hsv_high = colorsys.hsv_to_rgb(102, 255, 255)
-#
-# print(hsv_low)
-# print(hsv_high)
-#
-# rgb_low = colorsys.rgb_to_hsv(194, 119, 255)
-# rgb_high = colorsys.rgb_to_hsv(71, 0, 130)
+def write_g_needed_text(cv2):
+    cv2.putText(img, 'Press q to choose color from the center', (10, 25), font, 1, (255, 255, 255), 1, cv2.LINE_AA)
 
 lower_bound = np.array([33, 80, 40])
 upper_bound = np.array([102, 255, 255])
@@ -37,8 +33,13 @@ kernelClose = np.ones((20, 20))
 
 font = cv2.FONT_HERSHEY_SIMPLEX
 
+center_point_color = ([0, 0, 0],[0, 0, 0])
+
 while True:
+    k = cv2.waitKey(125)
+
     ret, img = cam.read()
+    center = get_center_x_y(img)
 
     # convert BGR to HSV
     imgHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -50,19 +51,31 @@ while True:
 
     conts, h = cv2.findContours(maskClose, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
-    if len(conts) > 0:
-        # draw in blue the contours that were founded
-        cv2.drawContours(img, conts, -1, 255, 3)
-        # print(len(conts))
-        # find the biggest area
-        c = max(conts, key=cv2.contourArea)
+    cv2.circle(img, center, 10, (0,0,255), 2)
+    write_g_needed_text(cv2)
+    if k == ord('q'):
+        center_point_color = get_center_point_boundries(img, center)
+        print(center_point_color)
+        lower_bound = center_point_color[0]
+        upper_bound = center_point_color[1]
 
-        x, y, w, h = cv2.boundingRect(c)
-        # draw the book contour (in green)
-        cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    else:
+        if len(conts) > 0:
+            # draw in blue the contours that were founded
+            cv2.drawContours(img, conts, -1, 255, 3)
+            # print(len(conts))
+            # find the biggest area
+            c = max(conts, key=cv2.contourArea)
 
-        top = top_point(c)
-        cv2.circle(img, top, 8, (0, 0, 255), -1)
+            x, y, w, h = cv2.boundingRect(c)
+            # draw the book contour (in green)
+            cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+            top = top_point(c)
+            cv2.circle(img, top, 8, (0, 0, 255), -1)
 
     cv2.imshow("cam", img)
     cv2.waitKey(10)
+
+cv2.release()
+cv2.destroyAllWindows()
