@@ -8,6 +8,8 @@ import src.resources as res
 from src.util import text_format, blit_rotate
 from src.colors import yellow, white, black, gray
 
+from src.state_types import States
+
 # Menu Fonts
 main_font = "Splatch.ttf"
 
@@ -85,6 +87,7 @@ class MenuState(State):
 
     def start_game(self):
         print("Start")
+        self._game.push_state(States.CONTROLLER_TEST)
 
     def event(self, event):
         if event.type == pygame.KEYDOWN:

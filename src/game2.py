@@ -2,7 +2,9 @@ import pygame
 import os
 import time
 
+from src.state_types import States
 from src.states import MenuState
+from src.states import ControllerTestState
 
 
 class Game:
@@ -76,6 +78,17 @@ class Game:
                 if i.active:
                     if not i.event(event):
                         break
+
+    def push_state(self, state):
+        if not isinstance(state, States):
+            raise Exception('{} is not a proper state'.format(state))
+        if States.CONTROLLER_TEST == state:
+            self.states.append(ControllerTestState(self))
+            return
+        if States.MENU == state:
+            self.states.append(MenuState(self))
+            return
+        raise Exception('{} is not getting pushed properly'.format(state))
 
     def mainloop(self):
         """
