@@ -1,81 +1,101 @@
 import cv2
 import numpy as np
-import colorsys
-import time
 
-def top_point(c):
-    return tuple(c[c[:, :, 1].argmin()][0])
 
-def get_center_x_y(img):
-    dimensions = img.shape
-    x_center = int(dimensions[1]/2)
-    y_center = int(dimensions[0]/2)
-    return (x_center, y_center)
+class Tracker:
+    def __init__(self, width, height):
+        self.height = height
+        self.width = width
 
-def get_center_point_boundries(img, center):
-    hsvRoi = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    crop_img = hsvRoi[center[1]-1:center[1]+1, center[0]-1:center[0]+1]
-    lower = np.array([crop_img[:, :, 0].min(), crop_img[:, :, 1].min(), crop_img[:, :, 2].min()])
-    lower_treshold = np.array([lower[0]-10, lower[1]-10, lower[2]-10])
-    upper = np.array([crop_img[:, :, 0].max(), crop_img[:, :, 1].max(), crop_img[:, :, 2].max()])
-    upper_treshold = np.array([upper[0]+10, upper[1]+10, upper[2]+10])
-    return (lower_treshold, upper_treshold)
+        self.font = cv2.FONT_HERSHEY_SIMPLEX
+        self.enabled = False
 
-def write_g_needed_text(cv2):
-    cv2.putText(img, 'Press q to choose color from the center', (10, 25), font, 1, (255, 255, 255), 1, cv2.LINE_AA)
+    def run(self):
+        self.enabled = True
 
-lower_bound = np.array([33, 80, 40])
-upper_bound = np.array([102, 255, 255])
+        camera = cv2.VideoCapture(0)
 
-cam = cv2.VideoCapture(0)
-kernelOpen = np.ones((5, 5))
-kernelClose = np.ones((20, 20))
+        lower_bound = None
+        upper_bound = None
 
-font = cv2.FONT_HERSHEY_SIMPLEX
+        kernel_open = np.ones((5, 5))
+        kernel_close = np.ones((20, 20))
 
-center_point_color = ([0, 0, 0],[0, 0, 0])
+        while self.enabled:
 
-while True:
-    k = cv2.waitKey(125)
+            ret, img = camera.read()
 
-    ret, img = cam.read()
-    center = get_center_x_y(img)
+            img = cv2.flip(img, 1)
 
-    # convert BGR to HSV
-    imgHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    # create the Mask
-    mask = cv2.inRange(imgHSV, lower_bound, upper_bound)
-    # morphology
-    maskOpen = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernelOpen)
-    maskClose = cv2.morphologyEx(maskOpen, cv2.MORPH_CLOSE, kernelClose)
+            center = self.center_point(img)
+            cv2.circle(img, center, 10, (0, 0, 255), 2)
 
-    conts, h = cv2.findContours(maskClose, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+            self.write_message(img, 'Press q to choose color from the center')
 
-    cv2.circle(img, center, 10, (0,0,255), 2)
-    write_g_needed_text(cv2)
-    if k == ord('q'):
-        center_point_color = get_center_point_boundries(img, center)
-        print(center_point_color)
-        lower_bound = center_point_color[0]
-        upper_bound = center_point_color[1]
+            key = cv2.waitKey(125)
 
-    else:
-        if len(conts) > 0:
-            # draw in blue the contours that were founded
-            cv2.drawContours(img, conts, -1, 255, 3)
-            # print(len(conts))
-            # find the biggest area
-            c = max(conts, key=cv2.contourArea)
+            if key == ord('q'):
+                center_point_color = self.color_from_area(img, center, 10)
+                print(center_point_color)
+                lower_bound = center_point_color[0]
+                upper_bound = center_point_color[1]
 
-            x, y, w, h = cv2.boundingRect(c)
-            # draw the book contour (in green)
-            cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            if lower_bound is not None and upper_bound is not None:
+                # convert BGR to HSV
+                img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-            top = top_point(c)
-            cv2.circle(img, top, 8, (0, 0, 255), -1)
+                # create the Mask
+                mask = cv2.inRange(img_hsv, lower_bound, upper_bound)
 
-    cv2.imshow("cam", img)
-    cv2.waitKey(10)
+                # morphology
+                mask_open = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel_open)
+                mask_close = cv2.morphologyEx(mask_open, cv2.MORPH_CLOSE, kernel_close)
 
-cv2.release()
-cv2.destroyAllWindows()
+                contours, h = cv2.findContours(mask_close, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
+                if len(contours) > 0:
+                    # draw in blue the contours that were founded
+                    cv2.drawContours(img, contours, -1, 255, 3)
+                    # print(len(contours))
+                    # find the biggest area
+                    largest_contour = max(contours, key=cv2.contourArea)
+
+                    x, y, w, h = cv2.boundingRect(largest_contour)
+                    # draw the book contour (in green)
+                    cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+                    top = self.top_point(largest_contour)
+                    cv2.circle(img, top, 8, (0, 0, 255), -1)
+
+            cv2.imshow("cam", img)
+            cv2.waitKey(10)
+
+        cv2.destroyAllWindows()
+
+    def finish(self):
+        self.enabled = False
+
+    def top_point(self, contour):
+        return tuple(contour[contour[:, :, 1].argmin()][0])
+
+    def center_point(self, img):
+        dimensions = img.shape
+        x_center = int(dimensions[1] / 2)
+        y_center = int(dimensions[0] / 2)
+        return x_center, y_center
+
+    def color_from_area(self, img, center, size):
+        hsv_roi = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+        crop_img = hsv_roi[center[1] - 1:center[1] + 1, center[0] - 1:center[0] + 1]
+        lower = np.array([crop_img[:, :, 0].min(), crop_img[:, :, 1].min(), crop_img[:, :, 2].min()])
+        lower_threshold = np.array([lower[0] - size, lower[1] - size, lower[2] - size])
+        upper = np.array([crop_img[:, :, 0].max(), crop_img[:, :, 1].max(), crop_img[:, :, 2].max()])
+        upper_threshold = np.array([upper[0] + size, upper[1] + size, upper[2] + size])
+        return lower_threshold, upper_threshold
+
+    def write_message(self, img, text):
+        cv2.putText(img, text, (10, 25), self.font, 1, (255, 255, 255), 1, cv2.LINE_AA)
+
+
+tracker = Tracker(1280, 820)
+tracker.run()
