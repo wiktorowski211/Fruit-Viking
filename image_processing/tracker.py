@@ -44,7 +44,7 @@ class Tracker:
 
                 return self.top_point(largest_contour)
         else:
-            return None
+            return 0, 0
 
     def top_point(self, contour):
         return tuple(contour[contour[:, :, 1].argmin()][0])
@@ -57,7 +57,7 @@ class Tracker:
 
 if __name__ == '__main__':
 
-    camera = Camera(1280, 820)
+    camera = Camera(1280, 720)
     color_picker = ColorPicker()
     tracker = Tracker()
 

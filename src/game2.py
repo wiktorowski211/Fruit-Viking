@@ -1,10 +1,11 @@
-import pygame
 import os
-import time
+import pygame
 
+from image_processing.camera import Camera
+from image_processing.tracker import Tracker
 from src.state_types import States
-from src.states import MenuState
 from src.states import ControllerTestState
+from src.states import MenuState
 
 
 class Game:
@@ -34,6 +35,11 @@ class Game:
 
         # Game is running
         self.running = True
+
+        self.camera = Camera(1280, 720)
+
+        self.controller = Tracker()
+
 
     def tick(self, dt):
         """
