@@ -43,8 +43,9 @@ class Tracker:
                 largest_contour = max(contours, key=cv2.contourArea)
 
                 self.draw_contour_rect(img, largest_contour)
-
                 return self.top_point(largest_contour)
+            else:
+                return 0, 0
         else:
             return 0, 0
 
