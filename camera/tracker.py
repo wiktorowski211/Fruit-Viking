@@ -10,6 +10,9 @@ class Tracker:
         self.font = cv2.FONT_HERSHEY_SIMPLEX
         self.enabled = False
 
+        self.kernel_open = np.ones((5, 5))
+        self.kernel_close = np.ones((20, 20))
+
     def run(self):
         self.enabled = True
 
@@ -17,9 +20,6 @@ class Tracker:
 
         lower_bound = None
         upper_bound = None
-
-        kernel_open = np.ones((5, 5))
-        kernel_close = np.ones((20, 20))
 
         while self.enabled:
 
@@ -41,39 +41,42 @@ class Tracker:
                 upper_bound = center_point_color[1]
 
             if lower_bound is not None and upper_bound is not None:
-                # convert BGR to HSV
-                img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+                tracked_position = self.position(img, lower_bound, upper_bound)
 
-                # create the Mask
-                mask = cv2.inRange(img_hsv, lower_bound, upper_bound)
-
-                # morphology
-                mask_open = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel_open)
-                mask_close = cv2.morphologyEx(mask_open, cv2.MORPH_CLOSE, kernel_close)
-
-                contours, h = cv2.findContours(mask_close, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-
-                if len(contours) > 0:
-                    # draw in blue the contours that were founded
-                    cv2.drawContours(img, contours, -1, 255, 3)
-                    # print(len(contours))
-                    # find the biggest area
-                    largest_contour = max(contours, key=cv2.contourArea)
-
-                    x, y, w, h = cv2.boundingRect(largest_contour)
-                    # draw the book contour (in green)
-                    cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
-
-                    top = self.top_point(largest_contour)
-                    cv2.circle(img, top, 8, (0, 0, 255), -1)
+                cv2.circle(img, tracked_position, 8, (0, 0, 255), -1)
 
             cv2.imshow("cam", img)
             cv2.waitKey(10)
 
         cv2.destroyAllWindows()
 
+    def position(self, img, lower_bound, upper_bound):
+        # convert BGR to HSV
+        img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+        # create the Mask
+        mask = cv2.inRange(img_hsv, lower_bound, upper_bound)
+
+        # morphology
+        mask_open = cv2.morphologyEx(mask, cv2.MORPH_OPEN, self.kernel_open)
+        mask_close = cv2.morphologyEx(mask_open, cv2.MORPH_CLOSE, self.kernel_close)
+
+        contours, h = cv2.findContours(mask_close, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
+        if len(contours) > 0:
+            # draw in blue the contours that were founded
+            cv2.drawContours(img, contours, -1, 255, 3)
+
+            # find the largest contour
+            largest_contour = max(contours, key=cv2.contourArea)
+
+            self.draw_contour_rect(img, largest_contour)
+
+            return self.top_point(largest_contour)
+
     def finish(self):
         self.enabled = False
+        cv2.destroyAllWindows()
 
     def top_point(self, contour):
         return tuple(contour[contour[:, :, 1].argmin()][0])
@@ -95,6 +98,10 @@ class Tracker:
 
     def write_message(self, img, text):
         cv2.putText(img, text, (10, 25), self.font, 1, (255, 255, 255), 1, cv2.LINE_AA)
+
+    def draw_contour_rect(self, img, contour):
+        x, y, w, h = cv2.boundingRect(contour)
+        cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
 
 tracker = Tracker(1280, 820)
