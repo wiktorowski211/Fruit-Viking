@@ -4,8 +4,7 @@ import numpy as np
 
 class Tracker:
     def __init__(self, width, height):
-        self.height = height
-        self.width = width
+        self.window_size = (width, height)
 
         self.font = cv2.FONT_HERSHEY_SIMPLEX
         self.enabled = False
@@ -25,6 +24,7 @@ class Tracker:
 
             ret, img = camera.read()
 
+            img = cv2.resize(img, self.window_size)
             img = cv2.flip(img, 1)
 
             center = self.center_point(img)
