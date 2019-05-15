@@ -65,7 +65,9 @@ class ControllerTestState(State):
 
     def tick(self, dt):
         # plug controller here tuple of (x, y) that is in game's screen boundary
-        self.controller_pos = self._game.controller.get_position()
+        img = self._game.camera.image()
+
+        self.controller_pos = self._game.controller.get_position(img)
 
         #self.controller_pos = pygame.mouse.get_pos()
 

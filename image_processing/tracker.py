@@ -9,8 +9,10 @@ class Tracker:
         self.kernel_open = np.ones((5, 5))
         self.kernel_close = np.ones((20, 20))
 
-        self.lower_color = None
-        self.upper_color = None
+        # should be None but since we don't have
+        # color picking we set it to torch color
+        self.lower_color = (-10, -10, 245)
+        self.upper_color = (10, 10, 265)
 
     def set_color(self, color):
         self.lower_color = color[0]
