@@ -24,7 +24,7 @@ class Camera:
     def write_message(self, img, text):
         cv2.putText(img, text, (10, 25), self.font, 1, (255, 255, 255), 1, cv2.LINE_AA)
 
-    def draw_rect(self, img, contour):
+    def draw_rectangle(self, img, contour):
         x, y, w, h = cv2.boundingRect(contour)
         cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
 

@@ -9,15 +9,15 @@ class Tracker:
         self.kernel_open = np.ones((5, 5))
         self.kernel_close = np.ones((20, 20))
 
-        self.lower_bound = None
-        self.upper_bound = None
+        self.lower_color = None
+        self.upper_color = None
 
     def set_color(self, color):
-        self.lower_bound = color[0]
-        self.upper_bound = color[1]
+        self.lower_color = color[0]
+        self.upper_color = color[1]
 
     def color_set(self):
-        return self.lower_bound is not None and self.upper_bound is not None
+        return self.lower_color is not None and self.upper_color is not None
 
     def get_position(self, img):
         if self.color_set():
@@ -25,7 +25,7 @@ class Tracker:
             img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
             # create the Mask
-            mask = cv2.inRange(img_hsv, self.lower_bound, self.upper_bound)
+            mask = cv2.inRange(img_hsv, self.lower_color, self.upper_color)
 
             # morphology
             mask_open = cv2.morphologyEx(mask, cv2.MORPH_OPEN, self.kernel_open)
