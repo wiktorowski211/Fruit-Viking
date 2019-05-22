@@ -11,7 +11,7 @@ from src.states import MenuState
 class Game:
     WIDTH = 1280
     HEIGHT = 720
-    FPS = 500
+    FPS = 30
 
     def __init__(self):
         # Game Initialization
