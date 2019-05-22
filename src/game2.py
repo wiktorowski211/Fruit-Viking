@@ -85,6 +85,14 @@ class Game:
         Stops on inactive state.
         """
         for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_F12:
+                    self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.FULLSCREEN)
+                    self.state_change = True
+                if event.key == pygame.K_F10:
+                    self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
+                    self.state_change = True
+
             if event.type == pygame.QUIT:
                 self.running = False
 
