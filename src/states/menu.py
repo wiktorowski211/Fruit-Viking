@@ -38,8 +38,6 @@ class Banana(DirtySprite):
         return blit_rotate(screen, self.img, self.pos, (w / 2, h / 2), self.angle)
 
 
-
-
 class MenuState(State):
     def __init__(self, *args, **kwargs):
         State.__init__(self, *args, **kwargs)
@@ -66,7 +64,6 @@ class MenuState(State):
         start_rect = self.text_start.get_rect()
         quit_rect = self.text_quit.get_rect()
 
-
         self.screen.fill(gray)
 
         # Main Menu Text
@@ -81,7 +78,6 @@ class MenuState(State):
         rects.append(draw_quit)
 
         return rects
-
 
     def tick(self, dt):
         if self.selected == "start":
@@ -98,7 +94,7 @@ class MenuState(State):
 
     def start_game(self):
         print("Start")
-        self._game.push_state(States.CONTROLLER_TEST)
+        self._game.push_state(States.LEVEL_SELECTION)
 
     def event(self, event):
         if event.type == pygame.KEYDOWN:

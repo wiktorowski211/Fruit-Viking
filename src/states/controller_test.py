@@ -90,5 +90,5 @@ class ControllerTestState(State):
     def event(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                print("Go back to menu/level selection")
+                print("Go back to level selection")
                 self._game.remove_top_state()
