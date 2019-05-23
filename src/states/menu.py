@@ -35,7 +35,9 @@ class Banana(DirtySprite):
 
     def render(self, screen):
         w, h = self.img.get_size()
-        blit_rotate(screen, self.img, self.pos, (w / 2, h / 2), self.angle)
+        return blit_rotate(screen, self.img, self.pos, (w / 2, h / 2), self.angle)
+
+
 
 
 class MenuState(State):
@@ -58,19 +60,28 @@ class MenuState(State):
 
     def render(self):
 
+        rects = []
+
         title_rect = self.title.get_rect()
         start_rect = self.text_start.get_rect()
         quit_rect = self.text_quit.get_rect()
+
 
         self.screen.fill(gray)
 
         # Main Menu Text
         self.screen.blit(self.title, (self._game.WIDTH / 2 - (title_rect[2] / 2), 80))
-        self.screen.blit(self.text_start, (self._game.WIDTH / 2 - (start_rect[2] / 2), 300))
-        self.screen.blit(self.text_quit, (self._game.WIDTH / 2 - (quit_rect[2] / 2), 480))
+        draw_start = self.screen.blit(self.text_start, (self._game.WIDTH / 2 - (start_rect[2] / 2), 300))
+        draw_quit = self.screen.blit(self.text_quit, (self._game.WIDTH / 2 - (quit_rect[2] / 2), 480))
 
         # Banana
-        self.banana.render(self.screen)
+        draw_banana = self.banana.render(self.screen)
+        rects.append(draw_banana)
+        rects.append(draw_start)
+        rects.append(draw_quit)
+
+        return rects
+
 
     def tick(self, dt):
         if self.selected == "start":
