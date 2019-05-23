@@ -4,9 +4,7 @@ import pygame
 from image_processing.camera import Camera
 from image_processing.tracker import Tracker
 from src.state_types import States
-from src.states import ControllerTestState
-from src.states import MenuState
-
+from src.states import ControllerTestState, MenuState, LevelSelectionState
 
 class Game:
     WIDTH = 1280
@@ -110,6 +108,9 @@ class Game:
             return
         if States.MENU == state:
             self.states.append(MenuState(self))
+            return
+        if States.LEVEL_SELECTION == state:
+            self.states.append(LevelSelectionState(self))
             return
         raise Exception('{} is not getting pushed properly'.format(state))
 
