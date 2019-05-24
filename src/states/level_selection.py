@@ -19,6 +19,7 @@ class MenuMovement(Enum):
     UP = 1
     DOWN = 2
 
+
 class MenuOption:
     def __init__(self, text, size, screen_width, text_height, transition):
         # Required for text redrawing
@@ -59,8 +60,8 @@ class LevelSelectionState(State):
         self.menu = []
         self.menu_pos = 0
 
-        self.menu.append(MenuOption("LEVEL 1", 60, self._game.WIDTH, 180, States.CONTROLLER_TEST))
-        self.menu.append(MenuOption("LEVEL 2", 60, self._game.WIDTH, 280, States.CONTROLLER_TEST))
+        self.menu.append(MenuOption("LEVEL 1", 60, self._game.WIDTH, 180, States.LEVEL1))
+        self.menu.append(MenuOption("LEVEL 2", 60, self._game.WIDTH, 280, States.LEVEL2))
         self.menu.append(MenuOption("CAMERA TEST", 60, self._game.WIDTH, 600, States.CONTROLLER_TEST))
         # Activate a menu item
         self.menu[0].activate()

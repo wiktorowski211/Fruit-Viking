@@ -1,22 +1,7 @@
 from .state import State
-from src.util import text_format
+from src.util import text_format, circle_collision
 from src.colors import gray, green, red, blue, white
 import pygame
-
-
-def circle_collision(a_pos, b_pos, a_radius, b_radius):
-    x1, y1 = a_pos
-    x2, y2 = b_pos
-
-    x = abs(x1 - x2)
-    y = abs(y1 - y2)
-
-    radius_sum = a_radius + b_radius
-    # pythagorean triangle without square root
-    if x*x+y*y <= radius_sum*radius_sum:
-        return True
-
-    return False
 
 
 class TargetCircle:
