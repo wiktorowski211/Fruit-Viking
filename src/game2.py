@@ -6,6 +6,7 @@ from image_processing.tracker import Tracker
 from src.state_types import States
 from src.states import ControllerTestState, MenuState, LevelSelectionState
 
+
 class Game:
     WIDTH = 1280
     HEIGHT = 720
@@ -103,6 +104,7 @@ class Game:
         if not isinstance(state, States):
             raise Exception('{} is not a proper state'.format(state))
         self.state_change = True
+        self.states[-1].active = False
         if States.CONTROLLER_TEST == state:
             self.states.append(ControllerTestState(self))
             return
@@ -117,6 +119,7 @@ class Game:
     def remove_top_state(self):
         self.states.pop()
         self.state_change = True
+        self.states[-1].active = True
 
     def mainloop(self):
         """
