@@ -10,20 +10,43 @@ class LevelState1(State):
         State.__init__(self, *args, **kwargs)
         self.active = True
 
-        self.target1 = Strawberry((200, 200), self.screen, False)
+        target1 = Strawberry((200, 200), self.screen, True)
+
+        target2 = Strawberry((300, 300), self.screen, True)
+
+        self.targets = [target2]
+        self.targets.append(target1)
+
+        # For rect cleanup
+        self.deleteds_area = []
+
+        self.score = 0
 
     def render(self):
-        rects = []
+        rects = [] + self.deleteds_area
+
+        self.deleteds_area.clear()
 
         self.screen.fill(gray)
-        rect_a, rect_b = self.target1.render()
-        rects.append(rect_a)
-        rects.append(rect_b)
+        for target in self.targets:
+            rect_a, rect_b = target.render()
+            rects.append(rect_a)
+            rects.append(rect_b)
 
         return rects
 
     def tick(self, dt):
-        self.target1.update(dt, (300, 300), 10)
+        marked_for_delete = []
+        for i, target in enumerate(self.targets):
+            target.update(dt, (300, 300), 10)
+            if target.defeated is True:
+                marked_for_delete.append(i)
+                self.deleteds_area.append(target.last_area)
+        for index in marked_for_delete[::-1]:
+            del self.targets[index]
+
+
+
 
     def event(self, event):
         if event.type == pygame.KEYDOWN:

@@ -17,6 +17,11 @@ class Target:
         self.last_area = 0
         self.current_area = self.screen.blit(self.img, (self.pos[0] + self.radius, self.pos[1] + self.radius))
 
+        # For tracking if target should get killed
+        self.under_cursor = False
+        self.defeated = False
+        self.left_screen = False
+
         self.debug = debug
         if debug is True:
             self.color = red
@@ -32,11 +37,20 @@ class Target:
         self.real_pos = pos_x, pos_y
         self.pos = int(pos_x), int(pos_y)
 
+        # When it goes out of screen
+        self.out_of_screen()
+
         # When collision occurs
         if circle_collision(controller_pos, self.pos, self.radius, controller_radius) is True:
             self.color = green
+            self.under_cursor = True
             return True
         self.color = red
+
+        # If it already collided previously
+        if self.under_cursor is True:
+            self.defeated = True
+
         return False
 
     def render(self):
@@ -45,4 +59,12 @@ class Target:
         self.current_area = self.screen.blit(self.img, (self.pos[0] - self.radius, self.pos[1] - self.radius))
 
         return self.last_area, self.current_area
+
+    def out_of_screen(self):
+        screen_width, screen_height = pygame.display.get_surface().get_size()
+        if self.pos[0] > screen_width + self.radius*3 or self.pos[0] < - self.radius*3:
+            self.left_screen = True
+
+    def on_defeat(self):
+        pass
 
