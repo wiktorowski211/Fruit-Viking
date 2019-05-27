@@ -17,6 +17,8 @@ class Game:
         # Game Initialization
         pygame.init()
         pygame.font.init()
+        # Pygame uses SDL 1.2...!
+        print(pygame.get_sdl_version())
 
         # Center the Game Application
         os.environ['SDL_VIDEO_CENTERED'] = '1'

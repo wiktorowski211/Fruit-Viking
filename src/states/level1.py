@@ -1,6 +1,7 @@
 from .state import State
 from src.targets import Strawberry
 from src.colors import gray
+from src.spawner import Spawner, FruitType
 import pygame
 
 
@@ -22,6 +23,10 @@ class LevelState1(State):
 
         self.score = 0
 
+        # Create the spawner
+        strawberry_spawner = Spawner(FruitType.STRAWBERRY, 3, 3.5, (160., -10.), (200., -40.), self.screen)
+        self.spawners = [strawberry_spawner]
+
     def render(self):
         rects = [] + self.deleteds_area
 
@@ -36,16 +41,34 @@ class LevelState1(State):
         return rects
 
     def tick(self, dt):
+        # Check if anything spawned
+        finished_spawners = []
+        for i, spawner in enumerate(self.spawners):
+            new_target = spawner.update(dt)
+            if spawner.finished() is True:
+                finished_spawners.append(i)
+            if new_target  is not None:
+                self.targets.append(new_target)
+
+        # Update targets
         marked_for_delete = []
         for i, target in enumerate(self.targets):
-            target.update(dt, (300, 300), 10)
+            # Apply gravity
+            target.velocity = target.velocity[0], target.velocity[1] + 20. * dt
+
+            # Update target
+            target.update(dt, (300, 300), 1)
             if target.defeated is True:
                 marked_for_delete.append(i)
                 self.deleteds_area.append(target.last_area)
+        # TODO: Delete off screen targets
+        # Delete dead targets
         for index in marked_for_delete[::-1]:
             del self.targets[index]
 
-
+        # Delete finished spawners
+        for index in finished_spawners[::-1]:
+            del self.spawners[index]
 
 
     def event(self, event):
