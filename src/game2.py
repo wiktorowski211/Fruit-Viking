@@ -130,18 +130,21 @@ class Game:
         Main loop of the game
         """
         counter = 0
-
+        time_elapsed = 0.0
         while self.running:
             time = self.clock.tick(self.FPS)
             dt = time / 1000.0
-            if counter == self.FPS:
-                print(1000/time)
+            #print(dt)
+            time_elapsed += dt
+            if time_elapsed >= 2.0 and counter > 0:
+                print("FPS: " + str(counter/2))
+                time_elapsed -= 2.0
                 counter = 0
+            counter += 1
             self.tick(dt)
             self.render()
             events = pygame.event.get()
             self.events(events)
-            counter += 1
         pygame.quit()
 
 
