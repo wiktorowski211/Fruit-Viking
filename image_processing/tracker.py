@@ -33,16 +33,16 @@ class Tracker:
             mask_open = cv2.morphologyEx(mask, cv2.MORPH_OPEN, self.kernel_open)
             mask_close = cv2.morphologyEx(mask_open, cv2.MORPH_CLOSE, self.kernel_close)
 
-            contours, h = cv2.findContours(mask_close, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+            contours, h = cv2.findContours(mask_close, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
             if len(contours) > 0:
                 # draw in blue the contours that were founded
-                cv2.drawContours(img, contours, -1, 255, 3)
+                # cv2.drawContours(img, contours, -1, 255, 3)
 
                 # find the largest contour
                 largest_contour = max(contours, key=cv2.contourArea)
 
-                self.draw_contour_rect(img, largest_contour)
+                # self.draw_contour_rect(img, largest_contour)
                 return self.top_point(largest_contour)
             else:
                 return 0, 0
@@ -51,11 +51,6 @@ class Tracker:
 
     def top_point(self, contour):
         return tuple(contour[contour[:, :, 1].argmin()][0])
-
-    # only for test, will be deleted
-    def draw_contour_rect(self, img, contour):
-        x, y, w, h = cv2.boundingRect(contour)
-        cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
 
 if __name__ == '__main__':
