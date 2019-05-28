@@ -12,7 +12,7 @@ class Target:
         self.velocity = (0, 0)
 
         w, _h = image.get_size()
-        self.radius = int(w/2.25)
+        self.radius = int(w / 2.25)
 
         self.last_area = 0
         self.current_area = self.screen.blit(self.img, (self.pos[0] + self.radius, self.pos[1] + self.radius))
@@ -62,9 +62,12 @@ class Target:
 
     def out_of_screen(self):
         screen_width, screen_height = pygame.display.get_surface().get_size()
-        if self.pos[0] > screen_width + self.radius*3 or self.pos[0] < - self.radius*3:
+        if self.pos[0] > screen_width + self.radius * 3 or self.pos[0] < - self.radius * 3:
             self.left_screen = True
 
     def on_defeat(self):
         pass
 
+    @staticmethod
+    def get_image():
+        pass

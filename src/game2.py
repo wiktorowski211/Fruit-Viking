@@ -5,7 +5,7 @@ from src.state_types import States
 # Import all possible states
 from src.states import *
 # Change controller here
-from src.controller import CameraController as UsedController
+from src.controller import MouseController as UsedController
 
 
 class Game:
@@ -74,7 +74,7 @@ class Game:
                     draw_rects.extend(rects)
                 if not getattr(i, 'propagate_render', False):
                     break
-        #pygame.display.flip()
+        # pygame.display.flip()
         pygame.display.update(draw_rects)
 
     def events(self, events):
@@ -134,10 +134,10 @@ class Game:
         while self.running:
             time = self.clock.tick(self.FPS)
             dt = time / 1000.0
-            #print(dt)
+            # print(dt)
             time_elapsed += dt
             if time_elapsed >= 2.0 and counter > 0:
-                print("FPS: " + str(counter/2))
+                print("FPS: " + str(counter / 2))
                 time_elapsed -= 2.0
                 counter = 0
             counter += 1
