@@ -9,7 +9,7 @@ from src.states import ControllerTestState, MenuState, LevelSelectionState
 class Game:
     WIDTH = 1280
     HEIGHT = 720
-    FPS = 30
+    FPS = 60
 
     def __init__(self):
         # Game Initialization
@@ -37,9 +37,10 @@ class Game:
         # Game is running
         self.running = True
 
-        self.camera = Camera(1280, 720)
+        camera = Camera(1280, 720)
 
-        self.controller = Tracker()
+        self.controller = Tracker(camera)
+        self.controller.start()
 
     def tick(self, dt):
         """
