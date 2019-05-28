@@ -1,11 +1,11 @@
 import os
 import pygame
 
-from image_processing.camera import Camera
-from image_processing.tracker import Tracker
 from src.state_types import States
 # Import all possible states
 from src.states import *
+# Change controller here
+from src.controller import CameraController as UsedController
 
 
 class Game:
@@ -41,9 +41,7 @@ class Game:
         # Game is running
         self.running = True
 
-        self.camera = Camera(1280, 720)
-
-        self.controller = Tracker()
+        self.controller = UsedController()
 
     def tick(self, dt):
         """
@@ -132,6 +130,7 @@ class Game:
         Main loop of the game
         """
         counter = 0
+
         while self.running:
             time = self.clock.tick(self.FPS)
             dt = time / 1000.0

@@ -28,10 +28,6 @@ class ControllerTestState(State):
         self.text = text_format("AIM AT CIRCLES TILL THEY TURN GREEN ", 'Splatch.ttf', 45, green)
         self.escape = text_format("ESC TO GO BACK", 'Splatch.ttf', 20, white)
 
-        self.controller_pos = (0, 0)
-
-        self.last_controller_area = (0, 0, 0, 0)
-
         self.targets = []
         self.targets.append(TargetCircle((400, 400), 100))
         self.targets.append(TargetCircle((800, 500), 50))
@@ -51,26 +47,20 @@ class ControllerTestState(State):
         for t in self.targets:
             t.render(self.screen)
 
-        draw_pointer = pygame.draw.circle(self.screen, blue, self.controller_pos, 10)
+        last_controller_area, curr_controller_area = self._game.controller.render(self.screen)
 
-        rects.append(self.last_controller_area)
-        rects.append(draw_pointer)
-
-        self.last_controller_area = draw_pointer
+        rects.append(last_controller_area)
+        rects.append(curr_controller_area)
 
         return rects
 
     def tick(self, dt):
-        # plug controller here tuple of (x, y) that is in game's screen boundary
-        img = self._game.camera.image()
 
-        self.controller_pos = self._game.controller.get_position(img)
-
-        self.controller_pos = pygame.mouse.get_pos()
+        controller_pos = self._game.controller.update_position()
 
         for t in self.targets:
-            t.tick(dt, self.controller_pos, 10)
-        #print(self.controller_pos)
+            t.tick(dt, controller_pos, 10)
+        #print(controller_pos)
 
     def event(self, event):
         if event.type == pygame.KEYDOWN:
