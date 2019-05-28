@@ -66,7 +66,6 @@ class LevelSelectionState(State):
         self.menu[0].activate()
 
     def render(self):
-
         rects = []
         self.screen.fill(gray)
 
@@ -92,16 +91,21 @@ class LevelSelectionState(State):
 
     def select_level(self):
         print("Selected a level")
+        res.music("start.ogg")
         self._game.push_state(self.menu[self.menu_pos].press())
 
     def event(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
+                res.music("menumove.ogg")
                 self.menu_movement = MenuMovement.UP
             elif event.key == pygame.K_DOWN:
+                res.music("menumove.ogg")
                 self.menu_movement = MenuMovement.DOWN
             if event.key == pygame.K_RETURN:
+                res.music("cut.ogg")
                 self.select_level()
             if event.key == pygame.K_ESCAPE:
                 print("Go back to menu")
+                res.music("back.ogg")
                 self._game.remove_top_state()
