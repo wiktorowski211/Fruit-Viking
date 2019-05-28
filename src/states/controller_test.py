@@ -1,22 +1,7 @@
 from .state import State
-from src.util import text_format
+from src.util import text_format, circle_collision
 from src.colors import gray, green, red, blue, white
 import pygame
-
-
-def circle_collision(a_pos, b_pos, a_radius, b_radius):
-    x1, y1 = a_pos
-    x2, y2 = b_pos
-
-    x = abs(x1 - x2)
-    y = abs(y1 - y2)
-
-    radius_sum = a_radius + b_radius
-    # pythagorean triangle without square root
-    if x*x+y*y <= radius_sum*radius_sum:
-        return True
-
-    return False
 
 
 class TargetCircle:
@@ -43,10 +28,6 @@ class ControllerTestState(State):
         self.text = text_format("AIM AT CIRCLES TILL THEY TURN GREEN ", 'Splatch.ttf', 45, green)
         self.escape = text_format("ESC TO GO BACK", 'Splatch.ttf', 20, white)
 
-        self.controller_pos = (0, 0)
-
-        self.last_controller_area = (0, 0, 0, 0)
-
         self.targets = []
         self.targets.append(TargetCircle((400, 400), 100))
         self.targets.append(TargetCircle((800, 500), 50))
@@ -66,26 +47,20 @@ class ControllerTestState(State):
         for t in self.targets:
             t.render(self.screen)
 
-        draw_pointer = pygame.draw.circle(self.screen, blue, self.controller_pos, 10)
+        last_controller_area, curr_controller_area = self._game.controller.render(self.screen)
 
-        rects.append(self.last_controller_area)
-        rects.append(draw_pointer)
-
-        self.last_controller_area = draw_pointer
+        rects.append(last_controller_area)
+        rects.append(curr_controller_area)
 
         return rects
 
     def tick(self, dt):
-        # plug controller here tuple of (x, y) that is in game's screen boundary
-        img = self._game.camera.image()
 
-        self.controller_pos = self._game.controller.get_position(img)
-
-        self.controller_pos = pygame.mouse.get_pos()
+        controller_pos = self._game.controller.update_position()
 
         for t in self.targets:
-            t.tick(dt, self.controller_pos, 10)
-        #print(self.controller_pos)
+            t.tick(dt, controller_pos, 10)
+        #print(controller_pos)
 
     def event(self, event):
         if event.type == pygame.KEYDOWN:
