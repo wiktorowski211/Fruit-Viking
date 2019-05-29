@@ -20,6 +20,7 @@ class LevelState1(State):
         # Scoring mechanisms
         self.score = 0
         self.hitnmiss = dict()
+        self.start_timer = 3.0
         self.finish_timer = 2.0
 
         # Create the spawner
@@ -55,6 +56,9 @@ class LevelState1(State):
         return rects
 
     def tick(self, dt):
+        self.start_timer -= dt
+        if self.start_timer >= 0:
+            return
         self.update_spawners(dt)
         self.update_targets(dt)
         self.check_for_stage_end(dt)
