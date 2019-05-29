@@ -126,6 +126,7 @@ class LevelState1(State):
             if target.defeated is True:
                 self.hitnmiss[target.__class__.__name__.upper()]["hits"] += 1
                 # print("Killed berry")
+                res.sfx("cut.ogg", True)
                 marked_for_delete.append(i)
                 self.deleteds_area.append(target.last_area)
             elif target.left_screen is True:
@@ -142,5 +143,6 @@ class LevelState1(State):
         if len(self.spawners) + len(self.targets) == 0:
             self.finish_timer -= dt
             if self.finish_timer <= 0:
+                res.music("end.ogg", True, True)
                 print(self.hitnmiss)
                 self._game.remove_top_state()
