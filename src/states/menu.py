@@ -100,14 +100,14 @@ class MenuState(State):
         if event.type == pygame.KEYDOWN:
 
             if event.key == pygame.K_UP:
-                res.music("menumove.ogg")
+                res.sfx("menumove.ogg", True)
                 self.selected = "start"
             elif event.key == pygame.K_DOWN:
-                res.music("menumove.ogg")
+                res.sfx("menumove.ogg", True)
                 self.selected = "quit"
             if event.key == pygame.K_RETURN:
                 if self.selected == "start":
                     self.start_game()
-                    res.music("cut.ogg")
+                    res.sfx("cut.ogg", True)
                 if self.selected == "quit":
                     self._game.running = False
