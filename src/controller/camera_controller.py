@@ -7,12 +7,10 @@ class CameraController(Controller):
     def __init__(self):
         Controller.__init__(self)
 
-        self.camera = Camera(1280, 720)
-
-        self.tracker = Tracker()
+        camera = Camera(1280, 720)
+        self.tracker = Tracker(camera)
+        self.tracker.start()
 
     def update_position(self):
-        img = self.camera.image()
-
-        self.position = self.tracker.get_position(img)
+        self.position = self.tracker.position
         return self.position
