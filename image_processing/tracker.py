@@ -16,7 +16,7 @@ class Tracker:
         self.frequency = 30
         self.running = False
         self.position = 0, 0
-        self.im_full = 5
+        self.im_full = 3
 
         # image processing
 
@@ -46,7 +46,7 @@ class Tracker:
             img = self.camera.image()
             position = self.get_position(img)
 
-            if self.prediction.is_point_valid(position, 25) or im_hungry == 0:
+            if self.prediction.is_point_valid(position, 50) or im_hungry == 0:
                 im_hungry = self.im_full
                 self.position = position
             else:
