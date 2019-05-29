@@ -18,6 +18,11 @@ class Background(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = location
 
+    def render(self, screen):
+        screen.blit(self.image, self.rect)
+
+
+
 
 
 class LevelState1(State):
@@ -27,6 +32,8 @@ class LevelState1(State):
         self.active = True
 
         self.targets = []
+
+        self.background = Background('../media/background.jpg', [0, 0])
 
         # For rect cleanup
         self.deleteds_area = []
@@ -78,12 +85,11 @@ class LevelState1(State):
 
         self.deleteds_area.clear()
 
-        self.screen.fill(gray)
+        # self.screen.fill(gray)
 
-        BackGround = Background('../media/background.jpg', [0, 0])
 
         # self.screen.fill([255, 255, 255])
-        self.screen.blit(BackGround.image, BackGround.rect)
+        self.background.render(self.screen)
 
         for target in self.targets:
             rect_a, rect_b = target.render()

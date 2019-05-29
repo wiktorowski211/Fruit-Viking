@@ -12,7 +12,7 @@ import src.resources as res
 class Game:
     WIDTH = 1280
     HEIGHT = 720
-    FPS = 30
+    FPS = 60
 
     def __init__(self):
         # Game Initialization
