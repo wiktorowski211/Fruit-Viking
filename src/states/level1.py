@@ -1,9 +1,23 @@
+from src.targets.grapes import Grapes
+from src.targets.kiwi import Kiwi
+from src.targets.lemon import Lemon
+from src.targets.pineapple import Pineapple
 from .state import State
 from src.targets import Strawberry, Tangerine
 from src.colors import gray
 from src.spawner import Spawner
 
+import src.resources as res
+
 import pygame
+
+class Background(pygame.sprite.Sprite):
+    def __init__(self, image_file, location):
+        pygame.sprite.Sprite.__init__(self)  #call Sprite initializer
+        self.image = pygame.image.load(image_file)
+        self.rect = self.image.get_rect()
+        self.rect.left, self.rect.top = location
+
 
 
 class LevelState1(State):
@@ -34,7 +48,28 @@ class LevelState1(State):
                                     min_velocity=(160., -10.), max_velocity=(200., -40.), strategy_right=False,
                                     screen=self.screen)
 
-        self.spawners = [strawberry_spawner, strawberry_spawner2, tangerine_spawner]
+        kiwi_spawner = Spawner(type=Kiwi, ammunition=10, initial_delay=20., cooldown=0.05,
+                                min_velocity=(150., -10.), max_velocity=(240., -40.), strategy_right=True,
+                                screen=self.screen)
+
+        kiwi_spawner2 = Spawner(type=Kiwi, ammunition=10, initial_delay=20., cooldown=0.05,
+                               min_velocity=(150., -10.), max_velocity=(240., -40.), strategy_right=False,
+                               screen=self.screen)
+
+        pineapple_spawner = Spawner(type=Pineapple, ammunition=5, initial_delay=5., cooldown=.4,
+                                 min_velocity=(190., -10.), max_velocity=(240., -40.), strategy_right=False,
+                                 screen=self.screen)
+
+        lemon_spawner = Spawner(type=Lemon, ammunition=4, initial_delay=14., cooldown=1.0,
+                                 min_velocity=(200., -10.), max_velocity=(240., -40.), strategy_right=True,
+                                 screen=self.screen)
+
+        grapes_spawner = Spawner(type=Grapes, ammunition=10, initial_delay=12., cooldown=.4,
+                                    min_velocity=(190., -10.), max_velocity=(240., -40.), strategy_right=False,
+                                    screen=self.screen)
+
+        self.spawners = [strawberry_spawner, strawberry_spawner2, tangerine_spawner, lemon_spawner, grapes_spawner, kiwi_spawner, kiwi_spawner2, pineapple_spawner]
+        res.music("metin.ogg")
         for s in self.spawners:
             self.hitnmiss[s.get_spawn_name()] = {"hits": 0, "misses": 0}
 
@@ -44,6 +79,11 @@ class LevelState1(State):
         self.deleteds_area.clear()
 
         self.screen.fill(gray)
+
+        BackGround = Background('../media/background.jpg', [0, 0])
+
+        # self.screen.fill([255, 255, 255])
+        self.screen.blit(BackGround.image, BackGround.rect)
 
         for target in self.targets:
             rect_a, rect_b = target.render()
@@ -67,6 +107,7 @@ class LevelState1(State):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 print("Go back to level selection")
+                res.music("loser.ogg", True, True)
                 self._game.remove_top_state()
 
     def update_spawners(self, dt):
@@ -98,6 +139,7 @@ class LevelState1(State):
             if target.defeated is True:
                 self.hitnmiss[target.__class__.__name__.upper()]["hits"] += 1
                 # print("Killed berry")
+                res.sfx("cut.ogg", True)
                 marked_for_delete.append(i)
                 self.deleteds_area.append(target.last_area)
             elif target.left_screen is True:
@@ -114,5 +156,6 @@ class LevelState1(State):
         if len(self.spawners) + len(self.targets) == 0:
             self.finish_timer -= dt
             if self.finish_timer <= 0:
+                res.music("end.ogg", True, True)
                 print(self.hitnmiss)
                 self._game.remove_top_state()
