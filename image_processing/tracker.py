@@ -4,17 +4,21 @@ import time
 from threading import Thread
 from image_processing.camera import Camera
 from image_processing.color_picker import ColorPicker
+from image_processing.prediction import Prediction
 
 
 class Tracker:
-    def __init__(self, camera):
+    def __init__(self, camera, prediction):
+        self.prediction = prediction
+        self.camera = camera
+
         # loop
         self.frequency = 30
         self.running = False
         self.position = 0, 0
+        self.im_full = 3
 
         # image processing
-        self.camera = camera
 
         self.kernel_open = np.ones((5, 5))
         self.kernel_close = np.ones((20, 20))
@@ -33,13 +37,23 @@ class Tracker:
         self.running = False
 
     def loop(self):
+        im_hungry = self.im_full
         while self.running:
             start = time.time()
 
             # Heavy load
 
             img = self.camera.image()
-            self.position = self.get_position(img)
+            position = self.get_position(img)
+
+            if self.prediction.is_point_valid(position, 50) or im_hungry == 0:
+                im_hungry = self.im_full
+                self.position = position
+            else:
+                im_hungry -= 1
+                self.position = self.prediction.predicted_point
+
+            self.prediction.predict_next_point(position)
 
             # End of heavy load
 
@@ -82,8 +96,9 @@ class Tracker:
 if __name__ == '__main__':
 
     camera = Camera(1280, 720)
+    prediction = Prediction()
 
-    tracker = Tracker(camera)
+    tracker = Tracker(camera, prediction)
     tracker.start()
 
     color_picker = ColorPicker()
