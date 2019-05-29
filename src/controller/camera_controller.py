@@ -1,5 +1,6 @@
 from image_processing.camera import Camera
 from image_processing.tracker import Tracker
+from image_processing.prediction import Prediction
 from .controller import Controller
 
 
@@ -8,7 +9,8 @@ class CameraController(Controller):
         Controller.__init__(self)
 
         camera = Camera(1280, 720)
-        self.tracker = Tracker(camera)
+        prediction = Prediction()
+        self.tracker = Tracker(camera, prediction)
         self.tracker.start()
 
     def update_position(self):
