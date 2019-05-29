@@ -1,8 +1,9 @@
-from enum import Enum
+from enum import Enum, auto
 
 
 class States(Enum):
-    MENU = 1
-    CONTROLLER_TEST = 2
-    LEVEL_SELECTION = 3
-    GAME_STAGE = 4
+    MENU = auto()
+    CONTROLLER_TEST = auto()
+    LEVEL_SELECTION = auto()
+    LEVEL1 = auto()
+    LEVEL2 = auto()

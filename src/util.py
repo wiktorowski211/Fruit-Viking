@@ -2,6 +2,22 @@ import pygame
 import src.resources as res
 
 
+# A collision between two circles, true when occurs
+def circle_collision(a_pos, b_pos, a_radius, b_radius):
+    x1, y1 = a_pos
+    x2, y2 = b_pos
+
+    x = abs(x1 - x2)
+    y = abs(y1 - y2)
+
+    radius_sum = a_radius + b_radius
+    # pythagorean triangle without square root
+    if x*x+y*y <= radius_sum*radius_sum:
+        return True
+
+    return False
+
+
 # Text Renderer
 def text_format(message, text_font, text_size, text_color):
     new_font = res.font(text_font, text_size)

@@ -1,20 +1,24 @@
 import os
 import pygame
 
-from image_processing.camera import Camera
-from image_processing.tracker import Tracker
 from src.state_types import States
-from src.states import ControllerTestState, MenuState, LevelSelectionState
+# Import all possible states
+from src.states import *
+# Change controller here
+from src.controller import MouseController as UsedController
+
 
 class Game:
     WIDTH = 1280
     HEIGHT = 720
-    FPS = 60
+    FPS = 30
 
     def __init__(self):
         # Game Initialization
         pygame.init()
         pygame.font.init()
+        # Pygame uses SDL 1.2...!
+        print(pygame.get_sdl_version())
 
         # Center the Game Application
         os.environ['SDL_VIDEO_CENTERED'] = '1'
@@ -37,10 +41,7 @@ class Game:
         # Game is running
         self.running = True
 
-        camera = Camera(1280, 720)
-
-        self.controller = Tracker(camera)
-        self.controller.start()
+        self.controller = UsedController()
 
     def tick(self, dt):
         """
@@ -73,7 +74,7 @@ class Game:
                     draw_rects.extend(rects)
                 if not getattr(i, 'propagate_render', False):
                     break
-        #pygame.display.flip()
+        # pygame.display.flip()
         pygame.display.update(draw_rects)
 
     def events(self, events):
@@ -104,6 +105,7 @@ class Game:
         if not isinstance(state, States):
             raise Exception('{} is not a proper state'.format(state))
         self.state_change = True
+        self.states[-1].active = False
         if States.CONTROLLER_TEST == state:
             self.states.append(ControllerTestState(self))
             return
@@ -113,28 +115,36 @@ class Game:
         if States.LEVEL_SELECTION == state:
             self.states.append(LevelSelectionState(self))
             return
+        if States.LEVEL1 == state:
+            self.states.append(LevelState1(self))
+            return
         raise Exception('{} is not getting pushed properly'.format(state))
 
     def remove_top_state(self):
         self.states.pop()
         self.state_change = True
+        self.states[-1].active = True
 
     def mainloop(self):
         """
         Main loop of the game
         """
         counter = 0
+        time_elapsed = 0.0
         while self.running:
             time = self.clock.tick(self.FPS)
             dt = time / 1000.0
-            if counter == self.FPS:
-                print(1000/time)
+            # print(dt)
+            time_elapsed += dt
+            if time_elapsed >= 2.0 and counter > 0:
+                print("FPS: " + str(counter / 2))
+                time_elapsed -= 2.0
                 counter = 0
+            counter += 1
             self.tick(dt)
             self.render()
             events = pygame.event.get()
             self.events(events)
-            counter += 1
         pygame.quit()
 
 
