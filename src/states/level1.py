@@ -61,6 +61,7 @@ class LevelState1(State):
                                     screen=self.screen)
 
         self.spawners = [strawberry_spawner, strawberry_spawner2, tangerine_spawner, lemon_spawner, grapes_spawner, kiwi_spawner, kiwi_spawner2, pineapple_spawner]
+        res.music("metin.ogg")
         for s in self.spawners:
             self.hitnmiss[s.get_spawn_name()] = {"hits": 0, "misses": 0}
 
@@ -93,7 +94,7 @@ class LevelState1(State):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 print("Go back to level selection")
-                res.sfx("loser.ogg", True)
+                res.music("loser.ogg", True, True)
                 self._game.remove_top_state()
 
     def update_spawners(self, dt):

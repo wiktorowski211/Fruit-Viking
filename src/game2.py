@@ -7,6 +7,7 @@ from src.states import *
 # Change controller here
 from src.controller import CameraController as UsedController
 
+import src.resources as res
 
 class Game:
     WIDTH = 1280
