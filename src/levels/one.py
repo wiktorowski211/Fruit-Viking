@@ -29,4 +29,4 @@ def create_level_one(game):
     spawners.append(Spawner(spawn_type=Grapes, ammunition=10, initial_delay=12., cooldown=.4,
                             min_velocity=(190., -10.), max_velocity=(240., -40.), strategy_right=False))
 
-    return GameLevelState(game, spawners=spawners, start_timer=3.0, debug=True)
+    return GameLevelState(game, spawners=spawners, start_timer=3.0, debug=False)

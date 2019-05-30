@@ -3,7 +3,6 @@ import src.resources as res
 
 
 class Kiwi(Target):
-    #    def __init__(self, image, pos, screen, debug: bool = True):
 
     def __init__(self, pos, screen, debug: bool = False):
         kiwi = res.gfx('kiwi.png', convert=True)
