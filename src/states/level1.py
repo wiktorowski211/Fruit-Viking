@@ -1,6 +1,12 @@
+from src.targets.banana import Banana
+from src.targets.apple import Apple
+from src.targets.cherry import Cherry
+from src.targets.eggplant import Eggplant
 from src.targets.grapes import Grapes
 from src.targets.kiwi import Kiwi
 from src.targets.lemon import Lemon
+from src.targets.melon import Melon
+from src.targets.pear import Pear
 from src.targets.pineapple import Pineapple
 from .state import State
 from src.targets import Strawberry, Tangerine
@@ -51,27 +57,7 @@ class LevelState1(State):
                                     min_velocity=(160., -10.), max_velocity=(200., -40.), strategy_right=False,
                                     screen=self.screen)
 
-        kiwi_spawner = Spawner(type=Kiwi, ammunition=10, initial_delay=20., cooldown=0.05,
-                                min_velocity=(150., -10.), max_velocity=(240., -40.), strategy_right=True,
-                                screen=self.screen)
-
-        kiwi_spawner2 = Spawner(type=Kiwi, ammunition=10, initial_delay=20., cooldown=0.05,
-                               min_velocity=(150., -10.), max_velocity=(240., -40.), strategy_right=False,
-                               screen=self.screen)
-
-        pineapple_spawner = Spawner(type=Pineapple, ammunition=5, initial_delay=5., cooldown=.4,
-                                 min_velocity=(190., -10.), max_velocity=(240., -40.), strategy_right=False,
-                                 screen=self.screen)
-
-        lemon_spawner = Spawner(type=Lemon, ammunition=4, initial_delay=14., cooldown=1.0,
-                                 min_velocity=(200., -10.), max_velocity=(240., -40.), strategy_right=True,
-                                 screen=self.screen)
-
-        grapes_spawner = Spawner(type=Grapes, ammunition=10, initial_delay=12., cooldown=.4,
-                                    min_velocity=(190., -10.), max_velocity=(240., -40.), strategy_right=False,
-                                    screen=self.screen)
-
-        self.spawners = [strawberry_spawner, strawberry_spawner2, tangerine_spawner, lemon_spawner, grapes_spawner, kiwi_spawner, kiwi_spawner2, pineapple_spawner]
+        self.spawners = [strawberry_spawner, strawberry_spawner2, tangerine_spawner]
         res.music("metin.ogg")
         for s in self.spawners:
             self.hitnmiss[s.get_spawn_name()] = {"hits": 0, "misses": 0}
