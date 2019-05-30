@@ -7,3 +7,6 @@ class States(Enum):
     LEVEL_SELECTION = auto()
     LEVEL1 = auto()
     LEVEL2 = auto()
+    LEVEL3 = auto()
+    LEVEL_BANANERS = auto()
+    LEVEL_TEST = auto()

@@ -120,6 +120,12 @@ class Game:
             self.states.append(create_level_one(self))
         elif States.LEVEL2 == state:
             self.states.append(create_level_two(self))
+        elif States.LEVEL3 == state:
+            self.states.append(create_level_three(self))
+        elif States.LEVEL_BANANERS == state:
+            self.states.append(create_level_bananers(self))
+        elif States.LEVEL_TEST == state:
+            self.states.append(create_level_test(self))
         else:
             raise Exception('{} is not getting pushed properly'.format(state))
 
