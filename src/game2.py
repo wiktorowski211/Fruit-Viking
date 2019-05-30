@@ -147,6 +147,7 @@ class Game:
             events = pygame.event.get()
             self.events(events)
         pygame.quit()
+        self.controller.clean_up()
 
 
 if __name__ == '__main__':

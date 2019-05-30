@@ -16,3 +16,6 @@ class CameraController(Controller):
     def update_position(self):
         self.position = self.tracker.position
         return self.position
+
+    def clean_up(self):
+        self.tracker.stop()

@@ -17,3 +17,6 @@ class Controller:
         self.area = pygame.draw.circle(screen, blue, self.position, self.radius)
 
         return last_area, self.area
+
+    def clean_up(self):
+        pass
