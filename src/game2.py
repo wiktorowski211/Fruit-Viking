@@ -9,10 +9,12 @@ from src.controller import CameraController as UsedController
 
 import src.resources as res
 
+
 class Game:
     WIDTH = 1280
     HEIGHT = 720
     FPS = 60
+    flags = pygame.DOUBLEBUF | pygame.HWSURFACE
 
     def __init__(self):
         # Game Initialization
@@ -25,7 +27,7 @@ class Game:
         os.environ['SDL_VIDEO_CENTERED'] = '1'
 
         # Game Resolution
-        self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
+        self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), flags=self.flags)
 
         # Add caption
         pygame.display.set_caption("Fruit Viking")
@@ -75,7 +77,7 @@ class Game:
                     draw_rects.extend(rects)
                 if not getattr(i, 'propagate_render', False):
                     break
-        # pygame.display.flip()
+        #pygame.display.flip()
         pygame.display.update(draw_rects)
 
     def events(self, events):
@@ -88,10 +90,11 @@ class Game:
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_F12:
-                    self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.FULLSCREEN)
+                    self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT),
+                                                          flags=self.flags | pygame.FULLSCREEN)
                     self.state_change = True
                 if event.key == pygame.K_F10:
-                    self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
+                    self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), flags=self.flags)
                     self.state_change = True
 
             if event.type == pygame.QUIT:
