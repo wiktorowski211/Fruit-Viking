@@ -1,46 +1,35 @@
-from math import sqrt
-
-
 class Prediction:
-    def __init__(self, q_metres_per_second):
+    def __init__(self, q):
         self.min_accuracy = 1
-        self.q_metres_per_second = q_metres_per_second
-        self.timestamp_milliseconds = 0
-        self.lat = 0
-        self.lng = 0
-        # P matrix. Negative means object uninitialised.  NB: units irrelevant, as long as same units used throughout
+        self.q = q
+        self.last_timestamp = 0
+        self.position = 0, 0
         self.variance = -1.0
 
-    def get_accuraccy(self):
-        return sqrt(self.variance)
-
-    def set_state(self, lat, lng, accuracy, timestamp_milliseconds):
-        self.lat = lat
-        self.lng = lng
+    def set_state(self, position, accuracy, timestamp):
+        self.position = position
         self.variance = accuracy ** 2
-        self.timestamp_milliseconds = timestamp_milliseconds
+        self.last_timestamp = timestamp
 
-    def process(self, lat, lng, accuracy, timestamp_milliseconds):
+    def process(self, position, accuracy, timestamp):
         if accuracy < self.min_accuracy:
             accuracy = self.min_accuracy
         if self.variance < 0:
-            # object is unitialised, so initialise with current values
-            self.set_state(lat, lng, accuracy, timestamp_milliseconds)
+            self.set_state(position, accuracy, timestamp)
         else:
-            # apply Kalman filter methodology
-            timeinc_milliseconds = timestamp_milliseconds - self.timestamp_milliseconds
-            if timeinc_milliseconds > 0:
-                # time has moved on, so the uncertainty in the current position increases
-                self.variance += timeinc_milliseconds * self.q_metres_per_second ** 2 / 1000
-                self.timestamp_milliseconds = timestamp_milliseconds
-                # TO DO: USE VELOCITY INFORMATION HERE TO GET A BETTER ESTIMATE OF CURRENT POSITION
+            delta_time = timestamp - self.last_timestamp
+            if delta_time > 0:
+                self.variance += delta_time * self.q ** 2 / 1000
+                self.last_timestamp = timestamp
 
-            # Kalman gain matrix K = Covarariance * Inverse(Covariance + MeasurementVariance)
-            # NB: because K is dimensionless, it doesn't matter that variance has different units to lat and lng
-            K = self.variance / (self.variance + accuracy ** 2)
-            self.lat += int(round(K * (lat - self.lat)))
-            self.lng += int(round(K * (lng - self.lng)))
-            # new Covarariance  matrix is (IdentityMatrix - K) * Covarariance
-            self.variance = (1 - K) * self.variance
+            x0, y0 = self.position
+            x1, y1 = position
 
-            return self.lat, self.lng
+            k = self.variance / (self.variance + accuracy ** 2)
+            x0 += int(round(k * (x1 - x0)))
+            y0 += int(round(k * (y1 - y0)))
+            self.variance = (1 - k) * self.variance
+
+            self.position = x0, y0
+
+        return self.position

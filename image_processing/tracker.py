@@ -3,7 +3,6 @@ import numpy as np
 import time
 from threading import Thread
 from image_processing.camera import Camera
-from image_processing.color_picker import ColorPicker
 from image_processing.prediction import Prediction
 
 
@@ -16,7 +15,6 @@ class Tracker:
         self.frequency = 30
         self.running = False
         self.position = 0, 0
-        self.im_full = 3
 
         # image processing
 
@@ -45,11 +43,9 @@ class Tracker:
             img = self.camera.image()
             position = self.get_position(img)
 
-            x, y = position
+            timestamp = time.time() * 1000
 
-            millis = int(round(time.time() * 1000))
-
-            predicted = self.prediction.process(x, y, 50, millis)
+            predicted = self.prediction.process(position, 50, timestamp)
 
             self.position = predicted
 
@@ -84,8 +80,7 @@ class Tracker:
         return tuple(contour[contour[:, :, 1].argmin()][0])
 
     def set_color(self, color):
-        self.lower_color = color[0]
-        self.upper_color = color[1]
+        self.lower_color, self.upper_color = color
 
     def is_color_set(self):
         return self.lower_color is not None and self.upper_color is not None
@@ -102,16 +97,13 @@ if __name__ == '__main__':
 
         # Heavy load
 
-        millis = int(round(time.time() * 1000))
-
         img = camera.image()
+
         position = tracker.get_position(img)
 
-        x, y = position
+        timestamp = time.time() * 1000
 
-        # prediction.set_state(x, y, 100, millis)
-
-        predicted = prediction.process(x, y, 100, millis)
+        predicted = prediction.process(position, 50, timestamp)
 
         camera.draw_circle(img, position, -1, (0, 0, 255))
 
