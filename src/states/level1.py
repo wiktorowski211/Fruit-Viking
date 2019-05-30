@@ -21,10 +21,6 @@ class Background(pygame.sprite.Sprite):
     def render(self, screen):
         screen.blit(self.image, self.rect)
 
-
-
-
-
 class LevelState1(State):
 
     def __init__(self, *args, **kwargs):
