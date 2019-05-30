@@ -14,6 +14,7 @@ from enum import Enum
 # Menu Fonts
 main_font = "Splatch.ttf"
 
+
 class MenuMovement(Enum):
     NONE = 0
     UP = 1
@@ -27,7 +28,7 @@ class MenuOption:
         self.size = size
         self.surface = text_format(text, main_font, size, black)
         surface_rect = self.surface.get_rect()
-        self.position = (screen_width/2 - (surface_rect[2]/2), text_height)
+        self.position = (screen_width / 2 - (surface_rect[2] / 2), text_height)
 
         # Required to determine where the button leads
         self.transition = transition
@@ -86,7 +87,7 @@ class LevelSelectionState(State):
             self.menu[self.menu_pos].deactivate()
             self.menu_pos -= 1
             if self.menu_pos < 0:
-                self.menu_pos = len(self.menu)-1
+                self.menu_pos = len(self.menu) - 1
             self.menu[self.menu_pos].activate()
         self.menu_movement = MenuMovement.NONE
 
