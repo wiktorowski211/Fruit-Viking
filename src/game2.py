@@ -5,7 +5,7 @@ from src.state_types import States
 # Import all possible states
 from src.states import *
 # Change controller here
-from src.controller import CameraController as UsedController
+from src.controller import MouseController as UsedController
 
 from src.levels import *
 
