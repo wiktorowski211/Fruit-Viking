@@ -1,74 +1,56 @@
-from src.targets.banana import Banana
-from src.targets.apple import Apple
-from src.targets.cherry import Cherry
-from src.targets.eggplant import Eggplant
-from src.targets.grapes import Grapes
-from src.targets.kiwi import Kiwi
-from src.targets.lemon import Lemon
-from src.targets.melon import Melon
-from src.targets.pear import Pear
-from src.targets.pineapple import Pineapple
 from .state import State
-from src.targets import Strawberry, Tangerine
-from src.colors import gray
-from src.spawner import Spawner
 
 import src.resources as res
 
 import pygame
 
+
 class Background(pygame.sprite.Sprite):
-    def __init__(self, image_file, location):
-        pygame.sprite.Sprite.__init__(self)  #call Sprite initializer
-        self.image = pygame.image.load(image_file)
+    def __init__(self, image_file):
+        pygame.sprite.Sprite.__init__(self)  # call Sprite initializer
+        self.image = res.gfx(image_file)
         self.rect = self.image.get_rect()
-        self.rect.left, self.rect.top = location
+        self.rect.left, self.rect.top = (0, 0)
 
     def render(self, screen):
         screen.blit(self.image, self.rect)
 
-class LevelState1(State):
 
-    def __init__(self, *args, **kwargs):
+class GameLevelState(State):
+
+    def __init__(self, *args, spawners=[], targets=[], debug: bool = False, start_timer: float = 1.0,
+                 finish_timer: float = 3.0, music='metin.ogg', background='background.jpg', **kwargs):
         State.__init__(self, *args, **kwargs)
         self.active = True
 
-        self.targets = []
+        self.targets = targets.copy()
 
-        self.background = Background('../media/background.jpg', [0, 0])
+        self.background = Background(background)
 
         # For rect cleanup
-        self.deleteds_area = []
+        self.deleteds_area = list()
 
         # Scoring mechanisms
         self.score = 0
         self.hitnmiss = dict()
-        self.start_timer = 3.0
-        self.finish_timer = 2.0
+        self.finish_timer = finish_timer
+        self.spawners = spawners.copy()
 
-        # Create the spawner
-        strawberry_spawner = Spawner(type=Strawberry, ammunition=3, initial_delay=3.0, cooldown=2.0,
-                                     min_velocity=(160., -10.), max_velocity=(200., -40.), strategy_right=False,
-                                     screen=self.screen)
-        strawberry_spawner2 = Spawner(type=Strawberry, ammunition=6, initial_delay=1.5, cooldown=3.0,
-                                      min_velocity=(160., -10.), max_velocity=(200., -40.), strategy_right=True,
-                                      screen=self.screen)
-        tangerine_spawner = Spawner(type=Tangerine, ammunition=5, initial_delay=10., cooldown=1.0,
-                                    min_velocity=(160., -10.), max_velocity=(200., -40.), strategy_right=False,
-                                    screen=self.screen)
+        for spawner in self.spawners:
+            spawner.debug = debug
+            # force stage start delay by adding the initial wait to spawners
+            spawner.initial_delay += start_timer
 
-        self.spawners = [strawberry_spawner, strawberry_spawner2, tangerine_spawner]
-        res.music("metin.ogg")
+        res.music(music)
         for s in self.spawners:
             self.hitnmiss[s.get_spawn_name()] = {"hits": 0, "misses": 0}
 
     def render(self):
-        rects = [] + self.deleteds_area
+        rects = list() + self.deleteds_area
 
         self.deleteds_area.clear()
 
         # self.screen.fill(gray)
-
 
         # self.screen.fill([255, 255, 255])
         self.background.render(self.screen)
@@ -84,9 +66,6 @@ class LevelState1(State):
         return rects
 
     def tick(self, dt):
-        self.start_timer -= dt
-        if self.start_timer >= 0:
-            return
         self.update_spawners(dt)
         self.update_targets(dt)
         self.check_for_stage_end(dt)
@@ -100,7 +79,7 @@ class LevelState1(State):
 
     def update_spawners(self, dt):
         # Check if anything spawned
-        finished_spawners = []
+        finished_spawners = list()
         for i, spawner in enumerate(self.spawners):
             new_target = spawner.update(dt)
             if spawner.finished() is True:
@@ -117,7 +96,7 @@ class LevelState1(State):
         controller_pos = self._game.controller.update_position()
 
         # Update targets
-        marked_for_delete = []
+        marked_for_delete = list()
         for i, target in enumerate(self.targets):
             # Apply gravity
             target.velocity = target.velocity[0], target.velocity[1] + 20. * dt
@@ -125,13 +104,13 @@ class LevelState1(State):
             # Update target
             target.update(dt, controller_pos, self._game.controller.radius)
             if target.defeated is True:
-                self.hitnmiss[target.__class__.__name__.upper()]["hits"] += 1
+                self.hitnmiss[target.__class__.__name__]["hits"] += 1
                 # print("Killed berry")
                 res.sfx("cut.ogg", True)
                 marked_for_delete.append(i)
                 self.deleteds_area.append(target.last_area)
             elif target.left_screen is True:
-                self.hitnmiss[target.__class__.__name__.upper()]["misses"] += 1
+                self.hitnmiss[target.__class__.__name__]["misses"] += 1
                 # print("Deleted out of screen berry")
                 marked_for_delete.append(i)
                 self.deleteds_area.append(target.last_area)

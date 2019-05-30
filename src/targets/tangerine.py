@@ -3,7 +3,6 @@ import src.resources as res
 
 
 class Tangerine(Target):
-    #    def __init__(self, image, pos, screen, debug: bool = True):
 
     def __init__(self, pos, screen, debug: bool = False):
         tangerine = res.gfx('tangerine.png', convert=True)
