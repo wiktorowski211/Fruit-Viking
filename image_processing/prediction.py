@@ -1,44 +1,35 @@
-from image_processing.camera import Camera
-from math import sqrt
-
-
 class Prediction:
-    def __init__(self):
-        self.last_point = 0, 0
-        self.predicted_point = 0, 0
-        self.last_distance = 0
+    def __init__(self, q):
+        self.min_accuracy = 1
+        self.q = q
+        self.last_timestamp = 0
+        self.position = 0, 0
+        self.variance = -1.0
 
-    def is_point_valid(self, point, distance_toleration):
-        distance = self.get_distance(point, self.predicted_point)
-        if distance < self.last_distance + distance_toleration:
-            return True
+    def set_state(self, position, accuracy, timestamp):
+        self.position = position
+        self.variance = accuracy ** 2
+        self.last_timestamp = timestamp
+
+    def process(self, position, accuracy, timestamp):
+        if accuracy < self.min_accuracy:
+            accuracy = self.min_accuracy
+        if self.variance < 0:
+            self.set_state(position, accuracy, timestamp)
         else:
-            return False
+            delta_time = timestamp - self.last_timestamp
+            if delta_time > 0:
+                self.variance += delta_time * self.q ** 2 / 1000
+                self.last_timestamp = timestamp
 
-    def get_distance(self, point1, point2):
-        x1, y1 = point1
-        x0, y0 = point2
-        return sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2)
+            x0, y0 = self.position
+            x1, y1 = position
 
-    def predict_next_point(self, point):
-        x1, y1 = point
-        x0, y0 = self.last_point
+            k = self.variance / (self.variance + accuracy ** 2)
+            x0 += int(round(k * (x1 - x0)))
+            y0 += int(round(k * (y1 - y0)))
+            self.variance = (1 - k) * self.variance
 
-        self.last_distance = self.get_distance(point, self.last_point)
+            self.position = x0, y0
 
-        x1 += x1 - x0
-        y1 += y1 - y0
-
-        self.last_point = point
-        self.predicted_point = x1, y1
-
-
-if __name__ == '__main__':
-    camera = Camera(1280, 720)
-
-    pr = Prediction()
-    pr.predict_next_point((10, 20))
-    pr.predict_next_point((8, 18))
-    pr.predict_next_point((6, 16))
-    pr.predict_next_point((20, 22))
-    pr.predict_next_point((25, 29))
+        return self.position

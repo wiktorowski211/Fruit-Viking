@@ -9,10 +9,13 @@ class CameraController(Controller):
         Controller.__init__(self)
 
         camera = Camera(1280, 720)
-        prediction = Prediction()
+        prediction = Prediction(200)
         self.tracker = Tracker(camera, prediction)
         self.tracker.start()
 
     def update_position(self):
         self.position = self.tracker.position
         return self.position
+
+    def clean_up(self):
+        self.tracker.stop()

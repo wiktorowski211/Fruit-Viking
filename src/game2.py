@@ -109,22 +109,23 @@ class Game:
         self.states[-1].active = False
         if States.CONTROLLER_TEST == state:
             self.states.append(ControllerTestState(self))
-            return
-        if States.MENU == state:
+        elif States.MENU == state:
             self.states.append(MenuState(self))
-            return
-        if States.LEVEL_SELECTION == state:
+        elif States.LEVEL_SELECTION == state:
             self.states.append(LevelSelectionState(self))
-            return
-        if States.LEVEL1 == state:
+        elif States.LEVEL1 == state:
             self.states.append(LevelState1(self))
-            return
-        raise Exception('{} is not getting pushed properly'.format(state))
+        else:
+            raise Exception('{} is not getting pushed properly'.format(state))
 
     def remove_top_state(self):
         self.states.pop()
         self.state_change = True
         self.states[-1].active = True
+
+    def swap_state(self, state):
+        self.remove_top_state()
+        self.push_state(state)
 
     def mainloop(self):
         """
@@ -147,6 +148,7 @@ class Game:
             events = pygame.event.get()
             self.events(events)
         pygame.quit()
+        self.controller.clean_up()
 
 
 if __name__ == '__main__':
