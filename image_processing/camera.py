@@ -28,5 +28,5 @@ class Camera:
         x, y, w, h = cv2.boundingRect(contour)
         cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-    def draw_circle(self, img, position, thickness):
-        cv2.circle(img, position, 10, (0, 0, 255), thickness)
+    def draw_circle(self, img, position, thickness, color):
+        cv2.circle(img, position, 10, color, thickness)

@@ -3,7 +3,6 @@ import numpy as np
 import time
 from threading import Thread
 from image_processing.camera import Camera
-from image_processing.color_picker import ColorPicker
 from image_processing.prediction import Prediction
 
 
@@ -16,7 +15,6 @@ class Tracker:
         self.frequency = 30
         self.running = False
         self.position = 0, 0
-        self.im_full = 3
 
         # image processing
 
@@ -37,7 +35,6 @@ class Tracker:
         self.running = False
 
     def loop(self):
-        im_hungry = self.im_full
         while self.running:
             start = time.time()
 
@@ -46,14 +43,11 @@ class Tracker:
             img = self.camera.image()
             position = self.get_position(img)
 
-            if self.prediction.is_point_valid(position, 50) or im_hungry == 0:
-                im_hungry = self.im_full
-                self.position = position
-            else:
-                im_hungry -= 1
-                self.position = self.prediction.predicted_point
+            timestamp = time.time() * 1000
 
-            self.prediction.predict_next_point(position)
+            predicted = self.prediction.process(position, 50, timestamp)
+
+            self.position = predicted
 
             # End of heavy load
 
@@ -86,8 +80,7 @@ class Tracker:
         return tuple(contour[contour[:, :, 1].argmin()][0])
 
     def set_color(self, color):
-        self.lower_color = color[0]
-        self.upper_color = color[1]
+        self.lower_color, self.upper_color = color
 
     def is_color_set(self):
         return self.lower_color is not None and self.upper_color is not None
@@ -96,29 +89,31 @@ class Tracker:
 if __name__ == '__main__':
 
     camera = Camera(1280, 720)
-    prediction = Prediction()
+    prediction = Prediction(200)
 
     tracker = Tracker(camera, prediction)
-    tracker.start()
-
-    color_picker = ColorPicker()
-
     while True:
+        start = time.time()
+
+        # Heavy load
+
         img = camera.image()
 
-        center = color_picker.center_point(img)
+        position = tracker.get_position(img)
 
-        camera.draw_circle(img, center, 2)
-        camera.write_message(img, 'Press q to choose color from the center')
+        timestamp = time.time() * 1000
 
-        key = cv2.waitKey(125)
+        predicted = prediction.process(position, 50, timestamp)
 
-        if key == ord('q'):
-            color = color_picker.from_area(img, 10)
-            tracker.set_color(color)
+        camera.draw_circle(img, position, -1, (0, 0, 255))
 
-        tracked_position = tracker.position
-
-        camera.draw_circle(img, tracked_position, -1)
+        camera.draw_circle(img, predicted, 10, (255, 0, 0))
 
         camera.show(img)
+
+        # End of heavy load
+
+        sleep_time = 1. / 30 - (time.time() - start)
+
+        if sleep_time > 0:
+            time.sleep(sleep_time)
