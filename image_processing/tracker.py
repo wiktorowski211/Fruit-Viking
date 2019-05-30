@@ -37,7 +37,6 @@ class Tracker:
         self.running = False
 
     def loop(self):
-        im_hungry = self.im_full
         while self.running:
             start = time.time()
 
@@ -46,14 +45,13 @@ class Tracker:
             img = self.camera.image()
             position = self.get_position(img)
 
-            if self.prediction.is_point_valid(position, 50) or im_hungry == 0:
-                im_hungry = self.im_full
-                self.position = position
-            else:
-                im_hungry -= 1
-                self.position = self.prediction.predicted_point
+            x, y = position
 
-            self.prediction.predict_next_point(position)
+            millis = int(round(time.time() * 1000))
+
+            predicted = self.prediction.process(x, y, 50, millis)
+
+            self.position = predicted
 
             # End of heavy load
 
@@ -96,29 +94,34 @@ class Tracker:
 if __name__ == '__main__':
 
     camera = Camera(1280, 720)
-    prediction = Prediction()
+    prediction = Prediction(200)
 
     tracker = Tracker(camera, prediction)
-    tracker.start()
-
-    color_picker = ColorPicker()
-
     while True:
+        start = time.time()
+
+        # Heavy load
+
+        millis = int(round(time.time() * 1000))
+
         img = camera.image()
+        position = tracker.get_position(img)
 
-        center = color_picker.center_point(img)
+        x, y = position
 
-        camera.draw_circle(img, center, 2)
-        camera.write_message(img, 'Press q to choose color from the center')
+        # prediction.set_state(x, y, 100, millis)
 
-        key = cv2.waitKey(125)
+        predicted = prediction.process(x, y, 100, millis)
 
-        if key == ord('q'):
-            color = color_picker.from_area(img, 10)
-            tracker.set_color(color)
+        camera.draw_circle(img, position, -1, (0, 0, 255))
 
-        tracked_position = tracker.position
-
-        camera.draw_circle(img, tracked_position, -1)
+        camera.draw_circle(img, predicted, 10, (255, 0, 0))
 
         camera.show(img)
+
+        # End of heavy load
+
+        sleep_time = 1. / 30 - (time.time() - start)
+
+        if sleep_time > 0:
+            time.sleep(sleep_time)

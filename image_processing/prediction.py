@@ -1,44 +1,46 @@
-from image_processing.camera import Camera
 from math import sqrt
 
 
 class Prediction:
-    def __init__(self):
-        self.last_point = 0, 0
-        self.predicted_point = 0, 0
-        self.last_distance = 0
+    def __init__(self, q_metres_per_second):
+        self.min_accuracy = 1
+        self.q_metres_per_second = q_metres_per_second
+        self.timestamp_milliseconds = 0
+        self.lat = 0
+        self.lng = 0
+        # P matrix. Negative means object uninitialised.  NB: units irrelevant, as long as same units used throughout
+        self.variance = -1.0
 
-    def is_point_valid(self, point, distance_toleration):
-        distance = self.get_distance(point, self.predicted_point)
-        if distance < self.last_distance + distance_toleration:
-            return True
+    def get_accuraccy(self):
+        return sqrt(self.variance)
+
+    def set_state(self, lat, lng, accuracy, timestamp_milliseconds):
+        self.lat = lat
+        self.lng = lng
+        self.variance = accuracy ** 2
+        self.timestamp_milliseconds = timestamp_milliseconds
+
+    def process(self, lat, lng, accuracy, timestamp_milliseconds):
+        if accuracy < self.min_accuracy:
+            accuracy = self.min_accuracy
+        if self.variance < 0:
+            # object is unitialised, so initialise with current values
+            self.set_state(lat, lng, accuracy, timestamp_milliseconds)
         else:
-            return False
+            # apply Kalman filter methodology
+            timeinc_milliseconds = timestamp_milliseconds - self.timestamp_milliseconds
+            if timeinc_milliseconds > 0:
+                # time has moved on, so the uncertainty in the current position increases
+                self.variance += timeinc_milliseconds * self.q_metres_per_second ** 2 / 1000
+                self.timestamp_milliseconds = timestamp_milliseconds
+                # TO DO: USE VELOCITY INFORMATION HERE TO GET A BETTER ESTIMATE OF CURRENT POSITION
 
-    def get_distance(self, point1, point2):
-        x1, y1 = point1
-        x0, y0 = point2
-        return sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2)
+            # Kalman gain matrix K = Covarariance * Inverse(Covariance + MeasurementVariance)
+            # NB: because K is dimensionless, it doesn't matter that variance has different units to lat and lng
+            K = self.variance / (self.variance + accuracy ** 2)
+            self.lat += int(round(K * (lat - self.lat)))
+            self.lng += int(round(K * (lng - self.lng)))
+            # new Covarariance  matrix is (IdentityMatrix - K) * Covarariance
+            self.variance = (1 - K) * self.variance
 
-    def predict_next_point(self, point):
-        x1, y1 = point
-        x0, y0 = self.last_point
-
-        self.last_distance = self.get_distance(point, self.last_point)
-
-        x1 += x1 - x0
-        y1 += y1 - y0
-
-        self.last_point = point
-        self.predicted_point = x1, y1
-
-
-if __name__ == '__main__':
-    camera = Camera(1280, 720)
-
-    pr = Prediction()
-    pr.predict_next_point((10, 20))
-    pr.predict_next_point((8, 18))
-    pr.predict_next_point((6, 16))
-    pr.predict_next_point((20, 22))
-    pr.predict_next_point((25, 29))
+            return self.lat, self.lng

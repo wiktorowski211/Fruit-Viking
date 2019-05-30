@@ -9,7 +9,7 @@ class CameraController(Controller):
         Controller.__init__(self)
 
         camera = Camera(1280, 720)
-        prediction = Prediction()
+        prediction = Prediction(100)
         self.tracker = Tracker(camera, prediction)
         self.tracker.start()
 
