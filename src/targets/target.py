@@ -12,7 +12,7 @@ class Target:
         self.velocity = (0, 0)
 
         w, _h = image.get_size()
-        self.radius = int(w / 2.25)
+        self.radius = int(w / 2.75)
 
         self.last_area = 0
         self.current_area = self.screen.blit(self.img, (self.pos[0] + self.radius, self.pos[1] + self.radius))
