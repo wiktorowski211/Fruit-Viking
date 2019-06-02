@@ -9,6 +9,10 @@ class Eggplant(Target):
         eggplant = res.gfx('eggplant.png', convert=True)
         Target.__init__(self, eggplant, pos, screen, debug)
 
+        w, _h = eggplant.get_size()
+        self.radius = int(w / 2.5)
+        self.offset = (25, 25)
+
     @staticmethod
     def get_image():
         return res.gfx('eggplant.png', convert=True)

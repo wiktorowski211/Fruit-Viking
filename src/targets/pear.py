@@ -9,6 +9,9 @@ class Pear(Target):
         pear = res.gfx('pear.png', convert=True)
         Target.__init__(self, pear, pos, screen, debug)
 
+        w, _h = pear.get_size()
+        self.radius = int(w / 2.3)
+        self.offset = (7, 20)
     @staticmethod
     def get_image():
         return res.gfx('pear.png', convert=True)

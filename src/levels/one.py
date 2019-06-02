@@ -1,6 +1,8 @@
 from src.targets import *
 from src.states import GameLevelState
 from src.spawner import Spawner
+from src.targets.peach import Peach
+from src.targets.watermelon import Watermelon
 
 
 def create_level_one(game):
@@ -28,5 +30,9 @@ def create_level_one(game):
 
     spawners.append(Spawner(spawn_type=Grapes, ammunition=10, initial_delay=12., cooldown=.4,
                             min_velocity=(190., -10.), max_velocity=(240., -40.), strategy_right=False))
+
+    spawners.append(Spawner(spawn_type=Apple, ammunition=1, initial_delay=0.0, cooldown=0.05,
+                            min_velocity=(100., -10.), max_velocity=(100., -40.), strategy_right=False,
+                            screen=game.screen))
 
     return GameLevelState(game, spawners=spawners, start_timer=3.0, debug=False)

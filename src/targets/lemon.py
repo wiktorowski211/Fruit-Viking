@@ -8,6 +8,10 @@ class Lemon(Target):
         lemon = res.gfx('lemon.png', convert=True)
         Target.__init__(self, lemon, pos, screen, debug)
 
+        w, _h = lemon.get_size()
+        self.radius = int(w / 2.5)
+        self.offset = (25, 25)
+
     @staticmethod
     def get_image():
         return res.gfx('lemon.png', convert=True)
