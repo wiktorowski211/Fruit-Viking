@@ -14,6 +14,7 @@ from enum import Enum
 # Menu Fonts
 main_font = "Splatch.ttf"
 
+
 class MenuMovement(Enum):
     NONE = 0
     UP = 1
@@ -27,7 +28,7 @@ class MenuOption:
         self.size = size
         self.surface = text_format(text, main_font, size, black)
         surface_rect = self.surface.get_rect()
-        self.position = (screen_width/2 - (surface_rect[2]/2), text_height)
+        self.position = (screen_width / 2 - (surface_rect[2] / 2), text_height)
 
         # Required to determine where the button leads
         self.transition = transition
@@ -62,6 +63,8 @@ class LevelSelectionState(State):
 
         self.menu.append(MenuOption("LEVEL 1", 60, self._game.WIDTH, 180, States.LEVEL1))
         self.menu.append(MenuOption("LEVEL 2", 60, self._game.WIDTH, 280, States.LEVEL2))
+        self.menu.append(MenuOption("LEVEL 3", 60, self._game.WIDTH, 380, States.LEVEL3))
+
         self.menu.append(MenuOption("CAMERA TEST", 60, self._game.WIDTH, 600, States.CONTROLLER_TEST))
         # Activate a menu item
         self.menu[0].activate()
@@ -86,7 +89,7 @@ class LevelSelectionState(State):
             self.menu[self.menu_pos].deactivate()
             self.menu_pos -= 1
             if self.menu_pos < 0:
-                self.menu_pos = len(self.menu)-1
+                self.menu_pos = len(self.menu) - 1
             self.menu[self.menu_pos].activate()
         self.menu_movement = MenuMovement.NONE
 
@@ -103,10 +106,15 @@ class LevelSelectionState(State):
             elif event.key == pygame.K_DOWN:
                 res.music("menumove.ogg")
                 self.menu_movement = MenuMovement.DOWN
-            if event.key == pygame.K_RETURN:
+            elif event.key == pygame.K_RETURN:
                 res.music("cut.ogg")
                 self.select_level()
-            if event.key == pygame.K_ESCAPE:
+            elif event.key == pygame.K_ESCAPE:
                 print("Go back to menu")
                 res.music("back.ogg")
                 self._game.remove_top_state()
+            # hidden stages
+            elif event.key == pygame.K_b:
+                self._game.push_state(States.LEVEL_BANANERS)
+            elif event.key == pygame.K_t:
+                self._game.push_state(States.LEVEL_TEST)

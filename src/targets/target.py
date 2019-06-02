@@ -10,6 +10,7 @@ class Target:
         self.real_pos = pos
         self.screen = screen
         self.velocity = (0, 0)
+        self.offset = (0, 0)
 
         w, _h = image.get_size()
         self.radius = int(w / 2.75)
@@ -56,7 +57,9 @@ class Target:
     def render(self):
         if self.debug is True:
             pygame.draw.circle(self.screen, self.color, self.pos, self.radius)
-        self.current_area = self.screen.blit(self.img, (self.pos[0] - self.radius, self.pos[1] - self.radius))
+        blit_x_pos = self.pos[0] - self.radius - self.offset[0]
+        blit_y_pos = self.pos[1] - self.radius - self.offset[1]
+        self.current_area = self.screen.blit(self.img, (blit_x_pos, blit_y_pos))
 
         return self.last_area, self.current_area
 

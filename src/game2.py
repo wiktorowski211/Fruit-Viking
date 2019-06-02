@@ -5,9 +5,9 @@ from src.state_types import States
 # Import all possible states
 from src.states import *
 # Change controller here
-from src.controller import CameraController as UsedController
+from src.controller import MouseController as UsedController
 
-import src.resources as res
+from src.levels import *
 
 
 class Game:
@@ -77,7 +77,7 @@ class Game:
                     draw_rects.extend(rects)
                 if not getattr(i, 'propagate_render', False):
                     break
-        #pygame.display.flip()
+        # pygame.display.flip()
         pygame.display.update(draw_rects)
 
     def events(self, events):
@@ -117,7 +117,15 @@ class Game:
         elif States.LEVEL_SELECTION == state:
             self.states.append(LevelSelectionState(self))
         elif States.LEVEL1 == state:
-            self.states.append(LevelState1(self))
+            self.states.append(create_level_one(self))
+        elif States.LEVEL2 == state:
+            self.states.append(create_level_two(self))
+        elif States.LEVEL3 == state:
+            self.states.append(create_level_three(self))
+        elif States.LEVEL_BANANERS == state:
+            self.states.append(create_level_bananers(self))
+        elif States.LEVEL_TEST == state:
+            self.states.append(create_level_test(self))
         else:
             raise Exception('{} is not getting pushed properly'.format(state))
 

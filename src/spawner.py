@@ -5,9 +5,12 @@ import pygame
 
 # Cooldown is in seconds
 class Spawner:
-    def __init__(self, *, type, ammunition, initial_delay, cooldown, min_velocity, max_velocity, screen,
+    def __init__(self, *, spawn_type, ammunition, initial_delay, cooldown, min_velocity, max_velocity,
+                 screen=None,
                  strategy_right: bool = False, debug: bool = False):
-        self.type = type
+        if screen is None:
+            screen = pygame.display.get_surface()
+        self.type = spawn_type
         self.ammunition = ammunition
         self.cooldown = cooldown
         self.initial_delay = initial_delay
@@ -62,4 +65,4 @@ class Spawner:
         return None
 
     def get_spawn_name(self):
-        return self.type.__name__.upper()
+        return self.type.__name__
