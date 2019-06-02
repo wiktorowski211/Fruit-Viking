@@ -18,6 +18,9 @@ class Target:
         self.last_area = 0
         self.current_area = self.screen.blit(self.img, (self.pos[0] + self.radius, self.pos[1] + self.radius))
 
+        # If the target has a positive effect (is a fruit) or not
+        self.is_fruit = True
+
         # For tracking if target should get killed
         self.under_cursor = False
         self.defeated = False
@@ -67,6 +70,9 @@ class Target:
         screen_width, screen_height = pygame.display.get_surface().get_size()
         if self.pos[0] > screen_width + self.radius * 3 or self.pos[0] < - self.radius * 3:
             self.left_screen = True
+
+    def get_pos(self):
+        return self.pos[0] - self.radius - self.offset[0], self.pos[1] - self.radius - self.offset[1]
 
     def on_defeat(self):
         pass

@@ -4,16 +4,7 @@ import src.resources as res
 
 import pygame
 
-
-class Background(pygame.sprite.Sprite):
-    def __init__(self, image_file):
-        pygame.sprite.Sprite.__init__(self)  # call Sprite initializer
-        self.image = res.gfx(image_file)
-        self.rect = self.image.get_rect()
-        self.rect.left, self.rect.top = (0, 0)
-
-    def render(self, screen):
-        screen.blit(self.image, self.rect)
+from .game_level_data import Background, Remains
 
 
 class GameLevelState(State):
@@ -24,15 +15,18 @@ class GameLevelState(State):
         self.active = True
 
         self.targets = targets.copy()
+        self.remains = list()
 
         self.background = Background(background)
 
         # For rect cleanup
         self.deleteds_area = list()
+        self.deleted_remains_area = list()
 
         # Scoring mechanisms
         self.score = 0
         self.hitnmiss = dict()
+
         self.finish_timer = finish_timer
         self.spawners = spawners.copy()
 
@@ -46,14 +40,18 @@ class GameLevelState(State):
             self.hitnmiss[s.get_spawn_name()] = {"hits": 0, "misses": 0}
 
     def render(self):
-        rects = list() + self.deleteds_area
+        rects = list() + self.deleteds_area + self.deleted_remains_area
 
         self.deleteds_area.clear()
+        self.deleted_remains_area.clear()
 
         # self.screen.fill(gray)
 
         # self.screen.fill([255, 255, 255])
         self.background.render(self.screen)
+
+        for remain in self.remains:
+            rects.append(remain.render(self.screen))
 
         for target in self.targets:
             rect_a, rect_b = target.render()
@@ -66,6 +64,7 @@ class GameLevelState(State):
         return rects
 
     def tick(self, dt):
+        self.update_remains(dt)
         self.update_spawners(dt)
         self.update_targets(dt)
         self.check_for_stage_end(dt)
@@ -105,6 +104,7 @@ class GameLevelState(State):
             target.update(dt, controller_pos, self._game.controller.radius)
             if target.defeated is True:
                 self.hitnmiss[target.__class__.__name__]["hits"] += 1
+                self.remains.append(Remains(3.5, target.get_pos(), target.is_fruit))
                 # print("Killed berry")
                 res.sfx("cut.ogg", True)
                 marked_for_delete.append(i)
@@ -118,6 +118,17 @@ class GameLevelState(State):
         # Delete dead targets
         for index in marked_for_delete[::-1]:
             del self.targets[index]
+
+    def update_remains(self, dt):
+        finished_remains = list()
+        for i, remain in enumerate(self.remains):
+            if remain.update(dt) is False:
+                finished_remains.append(i)
+
+        # Delete finished remains
+        for index in finished_remains[::-1]:
+            self.deleted_remains_area.append(self.remains[index].area())
+            del self.remains[index]
 
     def check_for_stage_end(self, dt):
         if len(self.spawners) + len(self.targets) == 0:
