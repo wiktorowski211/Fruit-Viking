@@ -1,8 +1,6 @@
 from src.targets import *
 from src.states import GameLevelState
 from src.spawner import Spawner
-from src.targets.peach import Peach
-from src.targets.watermelon import Watermelon
 
 
 def create_level_test(game):
@@ -66,6 +64,5 @@ def create_level_test(game):
     spawners.append(Spawner(spawn_type=Watermelon, ammunition=1, initial_delay=14.0, cooldown=0.05,
                             min_velocity=(100., -10.), max_velocity=(100., -40.), strategy_right=False,
                             screen=game.screen))
-
 
     return GameLevelState(game, spawners=spawners, start_timer=0.0, debug=True)

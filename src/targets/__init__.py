@@ -11,6 +11,5 @@ from .melon import Melon
 from .eggplant import Eggplant
 from .pear import Pear
 from .cherry import Cherry
-
-
-
+from .watermelon import Watermelon
+from .peach import Peach

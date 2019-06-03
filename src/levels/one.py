@@ -1,8 +1,6 @@
 from src.targets import *
 from src.states import GameLevelState
 from src.spawner import Spawner
-from src.targets.peach import Peach
-from src.targets.watermelon import Watermelon
 
 
 def create_level_one(game):
