@@ -32,4 +32,4 @@ def create_level_bananers(game):
     spawners.append(Spawner(spawn_type=Banana, ammunition=15, initial_delay=19., cooldown=0.05,
                             min_velocity=(380., -10.), max_velocity=(450., -100.), strategy_right=False))
 
-    return GameLevelState(game, spawners=spawners, start_timer=0.0, debug=True)
+    return GameLevelState(game, spawners=spawners, start_timer=0.0, debug=False)
