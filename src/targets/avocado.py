@@ -9,6 +9,10 @@ class Avocado(Target):
         avocado = res.gfx('avocado.png', convert=True)
         Target.__init__(self, avocado, pos, screen, debug)
 
+        w, _h = avocado.get_size()
+        self.radius = int(w / 2.5)
+        self.offset = (23, 25)
+
     @staticmethod
     def get_image():
         return res.gfx('avocado.png', convert=True)

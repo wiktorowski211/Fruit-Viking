@@ -9,6 +9,10 @@ class Peach(Target):
         peach = res.gfx('peach.png', convert=True)
         Target.__init__(self, peach, pos, screen, debug)
 
+        w, _h = peach.get_size()
+        self.radius = int(w / 2.3)
+        self.offset = (17, 23)
+
     @staticmethod
     def get_image():
         return res.gfx('peach.png', convert=True)

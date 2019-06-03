@@ -9,6 +9,9 @@ class Banana(Target):
         banana = res.gfx('banana.png', convert=True)
         Target.__init__(self, banana, pos, screen, debug)
 
+        w, _h =banana.get_size()
+        self.radius = int(w / 2.6)
+        self.offset = (13, 23)
     @staticmethod
     def get_image():
         return res.gfx('banana.png', convert=True)

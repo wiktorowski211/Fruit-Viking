@@ -9,6 +9,9 @@ class Melon(Target):
         melon = res.gfx('melon.png', convert=True)
         Target.__init__(self, melon, pos, screen, debug)
 
+        w, _h = melon.get_size()
+        self.radius = int(w / 2.5)
+        self.offset = (25, 25)
     @staticmethod
     def get_image():
         return res.gfx('melon.png', convert=True)

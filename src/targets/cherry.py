@@ -9,6 +9,10 @@ class Cherry(Target):
         cherry = res.gfx('cherry.png', convert=True)
         Target.__init__(self, cherry, pos, screen, debug)
 
+        w, _h =cherry.get_size()
+        self.radius = int(w / 2.7)
+        self.offset = (27, 65)
+
     @staticmethod
     def get_image():
         return res.gfx('cherry.png', convert=True)
