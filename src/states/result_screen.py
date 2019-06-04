@@ -4,11 +4,14 @@ import pygame
 import src.resources as res
 
 from src.util import text_format
-from src.colors import yellow, white, black, gray
+from src.colors import red, yellow, green, white, gray
 
 
-# Menu Fonts
+# Used fonts
 main_font = "Splatch.ttf"
+
+#percentage_font = "MIB.ttf"
+percentage_font = "Noise Machine.ttf"
 
 
 class ResultScreenState(State):
@@ -30,12 +33,13 @@ class ResultScreenState(State):
 
                 total += total_gain
                 hits += value['hits']
-        percentage = hits / total
-        print(round(percentage, 4) * 100, '%')
+        percentage = (hits / total) * 100
+        percentage = int(percentage)
+
+        self.init_render(percentage, score)
 
     def render(self):
         rects = []
-        self.screen.fill(gray)
 
         return rects
 
@@ -47,3 +51,35 @@ class ResultScreenState(State):
             if event.key == pygame.K_RETURN or pygame.K_ESCAPE:
                 # res.music("cut.ogg")
                 self._game.remove_top_state()
+
+    def init_render(self, percentage, score):
+        self.screen.fill(gray)
+
+        top_offset = 100
+
+        headline = text_format("HIT RATE", percentage_font, 75, white)
+        headline_rect = headline.get_rect()
+        self.screen.blit(headline, (self._game.WIDTH / 2 - (headline_rect[2] / 2), top_offset + 5))
+
+        if percentage > 75.0:
+            percentage_color = green
+            comment = "Berry good!"
+            comment_font_size = 200
+        elif percentage > 50.0:
+            percentage_color = yellow
+            comment = "You are getting there!"
+            comment_font_size = 100
+        else:
+            percentage_color = red
+            comment = "Don't give up!"
+            comment_font_size = 200
+
+        percentage_text = text_format(str(percentage) + "%", percentage_font, 200, percentage_color)
+        percentage_text_rect = percentage_text.get_rect()
+        self.screen.blit(percentage_text, (self._game.WIDTH / 2 - (percentage_text_rect[2] / 2), top_offset + 45))
+
+        comment_text = text_format(comment, percentage_font, comment_font_size, percentage_color)
+        comment_text_rect = comment_text.get_rect()
+        self.screen.blit(comment_text, (self._game.WIDTH / 2 - (comment_text_rect[2] / 2), top_offset + 250))
+
+
