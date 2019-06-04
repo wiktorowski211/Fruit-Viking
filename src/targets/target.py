@@ -18,9 +18,6 @@ class Target:
         self.last_area = 0
         self.current_area = self.screen.blit(self.img, (self.pos[0] + self.radius, self.pos[1] + self.radius))
 
-        # If the target has a positive effect (is a fruit) or not
-        self.is_fruit = True
-
         # For tracking if target should get killed
         self.under_cursor = False
         self.defeated = False
@@ -76,6 +73,11 @@ class Target:
 
     def on_defeat(self):
         pass
+
+    # If the target is supposed to be sliced
+    @staticmethod
+    def is_fruit():
+        return True
 
     @staticmethod
     def get_image():

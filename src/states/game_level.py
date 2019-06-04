@@ -2,6 +2,8 @@ from .state import State
 
 import src.resources as res
 
+from src.state_types import States
+
 import pygame
 
 from .game_level_data import Background, Remains
@@ -37,7 +39,7 @@ class GameLevelState(State):
 
         res.music(music)
         for s in self.spawners:
-            self.hitnmiss[s.get_spawn_name()] = {"hits": 0, "misses": 0}
+            self.hitnmiss[s.get_spawn_name()] = {"is_fruit": s.type.is_fruit(), "hits": 0, "misses": 0}
 
     def render(self):
         rects = list() + self.deleteds_area + self.deleted_remains_area
@@ -135,5 +137,4 @@ class GameLevelState(State):
             self.finish_timer -= dt
             if self.finish_timer <= 0:
                 res.music("end.ogg", True, True)
-                print(self.hitnmiss)
-                self._game.remove_top_state()
+                self._game.swap_state(States.RESULT_SCREEN, score=self.hitnmiss)
