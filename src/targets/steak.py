@@ -13,14 +13,13 @@ class Steak(Target):
         #self.offset = (22, 25)
 
     def on_defeat(self, targets: list):
-        for target in targets:
+        for target in targets[1::3]:
             target.velocity = target.velocity[0] * 2.0, target.velocity[1]
 
     @staticmethod
     def get_image():
         return res.gfx('steak.png', convert=True)
 
-    # If the target is supposed to be sliced
     @staticmethod
     def is_fruit():
         return False

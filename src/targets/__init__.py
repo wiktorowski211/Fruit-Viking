@@ -15,3 +15,4 @@ from .watermelon import Watermelon
 from .peach import Peach
 
 from .steak import Steak
+from .fries import Fries
