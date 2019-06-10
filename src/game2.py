@@ -5,7 +5,7 @@ from src.state_types import States
 # Import all possible states
 from src.states import *
 # Change controller here
-from src.controller import MouseController as UsedController
+from src.controller import CameraController as UsedController
 
 from src.levels import *
 
@@ -105,7 +105,7 @@ class Game:
                     if not i.event(event):
                         break
 
-    def push_state(self, state):
+    def push_state(self, state, **kwargs):
         if not isinstance(state, States):
             raise Exception('{} is not a proper state'.format(state))
         self.state_change = True
@@ -116,6 +116,8 @@ class Game:
             self.states.append(MenuState(self))
         elif States.LEVEL_SELECTION == state:
             self.states.append(LevelSelectionState(self))
+        elif States.RESULT_SCREEN == state:
+            self.states.append(ResultScreenState(self, **kwargs))
         elif States.LEVEL1 == state:
             self.states.append(create_level_one(self))
         elif States.LEVEL2 == state:
@@ -134,9 +136,9 @@ class Game:
         self.state_change = True
         self.states[-1].active = True
 
-    def swap_state(self, state):
+    def swap_state(self, state, **kwargs):
         self.remove_top_state()
-        self.push_state(state)
+        self.push_state(state, **kwargs)
 
     def mainloop(self):
         """
