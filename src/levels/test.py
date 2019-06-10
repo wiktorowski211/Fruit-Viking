@@ -13,7 +13,7 @@ def create_level_test(game):
                             min_velocity=(300., -10.), max_velocity=(500., -40.), strategy_right=False,
                             screen=game.screen))
 
-    spawners.append(Spawner(spawn_type=Eggplant, ammunition=3, initial_delay=0.0, cooldown=0.05,
+    spawners.append(Spawner(spawn_type=Steak, ammunition=3, initial_delay=0.0, cooldown=0.05,
                             min_velocity=(300., -10.), max_velocity=(500., -40.), strategy_right=False,
                             screen=game.screen))
 

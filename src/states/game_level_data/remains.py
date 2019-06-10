@@ -8,8 +8,7 @@ class Remains:
         if is_fruit:
             img = choice(['exp1', 'exp2', 'exp3', 'exp4', 'exp5'])
         else:
-            # TODO: Images for non fruits
-            raise Exception("Non fruit target's remains not implemented yet")
+            img = 'blood1'
         self.img = res.gfx(img + '.png', convert=True)
         self.pos = pos
 

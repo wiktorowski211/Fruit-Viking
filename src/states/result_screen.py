@@ -61,17 +61,20 @@ class ResultScreenState(State):
         headline_rect = headline.get_rect()
         self.screen.blit(headline, (self._game.WIDTH / 2 - (headline_rect[2] / 2), top_offset + 5))
 
-        if percentage > 75.0:
+        if percentage >= 100.0:
+            percentage_color = green
+            comment = "Peach perfect!"
+        elif percentage > 75.0:
             percentage_color = green
             comment = "Berry good!"
             comment_font_size = 200
         elif percentage > 50.0:
             percentage_color = yellow
-            comment = "You are getting there!"
+            comment = "Almost bananas, try again!"
             comment_font_size = 100
         else:
             percentage_color = red
-            comment = "Don't give up!"
+            comment = "Don't kiwi up!"
             comment_font_size = 200
 
         percentage_text = text_format(str(percentage) + "%", percentage_font, 200, percentage_color)

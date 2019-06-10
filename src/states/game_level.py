@@ -106,7 +106,7 @@ class GameLevelState(State):
             target.update(dt, controller_pos, self._game.controller.radius)
             if target.defeated is True:
                 self.hitnmiss[target.__class__.__name__]["hits"] += 1
-                self.remains.append(Remains(3.5, target.get_pos(), target.is_fruit))
+                self.remains.append(Remains(3.5, target.get_pos(), target.is_fruit()))
                 # print("Killed berry")
                 res.sfx("cut.ogg", True)
                 marked_for_delete.append(i)
