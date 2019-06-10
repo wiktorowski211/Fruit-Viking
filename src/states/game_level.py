@@ -109,6 +109,7 @@ class GameLevelState(State):
                 self.remains.append(Remains(3.5, target.get_pos(), target.is_fruit()))
                 # print("Killed berry")
                 res.sfx("cut.ogg", True)
+                target.on_defeat(self.targets)
                 marked_for_delete.append(i)
                 self.deleteds_area.append(target.last_area)
             elif target.left_screen is True:

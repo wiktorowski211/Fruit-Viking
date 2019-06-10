@@ -71,7 +71,7 @@ class Target:
     def get_pos(self):
         return self.pos[0] - self.radius - self.offset[0], self.pos[1] - self.radius - self.offset[1]
 
-    def on_defeat(self):
+    def on_defeat(self, targets):
         pass
 
     # If the target is supposed to be sliced

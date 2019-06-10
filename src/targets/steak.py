@@ -12,6 +12,10 @@ class Steak(Target):
         #self.radius = int(w / 2.5)
         #self.offset = (22, 25)
 
+    def on_defeat(self, targets: list):
+        for target in targets:
+            target.velocity = target.velocity[0] * 2.0, target.velocity[1]
+
     @staticmethod
     def get_image():
         return res.gfx('steak.png', convert=True)
