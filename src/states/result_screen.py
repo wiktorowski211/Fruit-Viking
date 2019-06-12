@@ -64,7 +64,7 @@ class ResultScreenState(State):
         if percentage >= 100.0:
             percentage_color = green
             comment = "Peach perfect!"
-            comment_font_size = 200
+            comment_font_size = 100
         elif percentage > 75.0:
             percentage_color = green
             comment = "Berry good!"

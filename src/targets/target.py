@@ -67,6 +67,8 @@ class Target:
         screen_width, screen_height = pygame.display.get_surface().get_size()
         if self.pos[0] > screen_width + self.radius * 3 or self.pos[0] < - self.radius * 3:
             self.left_screen = True
+        if self.pos[1] > screen_height + self.radius * 3 or self.pos[1] < - self.radius * 3:
+            self.left_screen = True
 
     def get_pos(self):
         return self.pos[0] - self.radius - self.offset[0], self.pos[1] - self.radius - self.offset[1]
