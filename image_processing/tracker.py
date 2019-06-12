@@ -11,6 +11,8 @@ class Tracker:
         self.prediction = prediction
         self.camera = camera
 
+        self.previous_position = 0, 0
+
         # loop
         self.frequency = 30
         self.running = False
@@ -69,12 +71,12 @@ class Tracker:
 
             if len(contours) > 0:
                 largest_contour = max(contours, key=cv2.contourArea)
-
-                return self.highpoint(largest_contour)
+                self.previous_position = self.highpoint(largest_contour)
+                return self.previous_position
             else:
-                return 0, 0
+                return self.previous_position
         else:
-            return 0, 0
+            return self.previous_position
 
     def highpoint(self, contour):
         return tuple(contour[contour[:, :, 1].argmin()][0])
