@@ -11,5 +11,7 @@ def create_level_one(game):
                               min_velocity=(160., -10.), max_velocity=(200., -40.), strategy_right=True))
     spawners.append(Spawner(spawn_type=Tangerine, ammunition=5, initial_delay=10., cooldown=1.0,
                             min_velocity=(160., -10.), max_velocity=(200., -40.), strategy_right=False))
+    spawners.append(Spawner(spawn_type=Steak, ammunition=1, initial_delay=9., cooldown=1.0,
+                            min_velocity=(50., -10.), max_velocity=(100., -40.), strategy_right=False))
 
     return GameLevelState(game, spawners=spawners, start_timer=3.0, debug=False)

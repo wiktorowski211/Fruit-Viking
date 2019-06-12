@@ -13,3 +13,6 @@ from .pear import Pear
 from .cherry import Cherry
 from .watermelon import Watermelon
 from .peach import Peach
+
+from .steak import Steak
+from .fries import Fries

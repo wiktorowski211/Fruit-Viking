@@ -32,4 +32,9 @@ def create_level_two(game):
     spawners.append(Spawner(spawn_type=Apple, ammunition=1, initial_delay=0.0, cooldown=0.05,
                             min_velocity=(100., -10.), max_velocity=(100., -40.), strategy_right=False))
 
+    spawners.append(Spawner(spawn_type=Fries, ammunition=2, initial_delay=5., cooldown=1.0,
+                            min_velocity=(50., -10.), max_velocity=(100., -40.), strategy_right=False))
+    spawners.append(Spawner(spawn_type=Steak, ammunition=3, initial_delay=5., cooldown=4.0,
+                            min_velocity=(50., -10.), max_velocity=(100., -40.), strategy_right=True))
+
     return GameLevelState(game, spawners=spawners, start_timer=0.0, debug=False)

@@ -8,9 +8,10 @@ class Grapes(Target):
         grapes = res.gfx('grapes.png', convert=True)
         Target.__init__(self, grapes, pos, screen, debug)
 
-        w, _h =grapes.get_size()
+        w, _h = grapes.get_size()
         self.radius = int(w / 2.1)
         self.offset = (10, 10)
+
     @staticmethod
     def get_image():
         return res.gfx('grapes.png', convert=True)

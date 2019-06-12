@@ -28,4 +28,13 @@ def create_level_three(game):
     spawners.append(Spawner(spawn_type=Banana, ammunition=4, initial_delay=20., cooldown=0.10,
                             min_velocity=(200., -10.), max_velocity=(300., -70.), strategy_right=False))
 
+    spawners.append(Spawner(spawn_type=Steak, ammunition=5, initial_delay=1., cooldown=4.0,
+                            min_velocity=(50., -10.), max_velocity=(100., -40.), strategy_right=False))
+
+    spawners.append(Spawner(spawn_type=Steak, ammunition=2, initial_delay=3., cooldown=2.5,
+                            min_velocity=(50., -10.), max_velocity=(100., -40.), strategy_right=False))
+
+    spawners.append(Spawner(spawn_type=Steak, ammunition=4, initial_delay=5., cooldown=4.0,
+                            min_velocity=(50., -10.), max_velocity=(100., -40.), strategy_right=True))
+
     return GameLevelState(game, spawners=spawners, start_timer=0.0, debug=False)
