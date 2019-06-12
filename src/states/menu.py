@@ -20,7 +20,6 @@ class Banana(DirtySprite):
         self.pos = pos
 
         banana = res.gfx('Banana_happy.png', convert_alpha=True)
-        banana = pygame.transform.scale(banana, (256, 256))
 
         self.img = pygame.transform.scale(banana, (256, 256))
         self.angle = 0
